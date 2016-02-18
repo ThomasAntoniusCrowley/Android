@@ -37,6 +37,35 @@ public class Menu
         }
     }
 
+    public void removeItem(int itemNo) {
+        try {
+            for (int i = itemNo - 1; i < menu.length -1; ++i) {
+                menu[i] = menu[i+1];
+            }
+            menu[menu.length - 1] = null;
+        }
+
+        catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Error: could not remove item. Please restart menu entries.");
+        }
+    }
+
+    @Override public String toString() {
+        String menuString = "";
+        for (Item thisItem : menu) {
+            if (thisItem != null) {
+                menuString += thisItem.toString();
+                menuString += "\n";
+            }
+
+            else {
+                menuString += "<Empty element>";
+                menuString += "\n";
+            }
+        }
+        return menuString;
+    }
+
 }
 
 
