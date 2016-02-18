@@ -8,6 +8,12 @@ import java.util.concurrent.Executors;
 
 public class Server implements Runnable
 {
+    /**
+     * Class holding all methods for server functionality using thread-pool architecture.
+     * Handles client send/receive requests and threading.
+     *
+     * Edit MAXCLIENTS to change size of thread pool.
+     */
     private Socket connection;
     private int ID;
     private static int clientCount;
@@ -21,6 +27,10 @@ public class Server implements Runnable
 
     public void ReceiveOrder()
     {
+        /**
+         * Skeleton code for receiving order details from client app. Will update to plug in client app.
+         */
+
         try //Receives order information from client
         {
             ObjectInputStream ois = new ObjectInputStream(connection.getInputStream());
@@ -29,13 +39,12 @@ public class Server implements Runnable
             FileOutputStream fos = new FileOutputStream("<Path to orders file>", true);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(file);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+//    CODE DEPRECATED
 //    public void SendToClient()
 //    {
 //        try //Handles request and sends appropriate data
@@ -50,6 +59,10 @@ public class Server implements Runnable
 
     public void Disconnect()
     {
+        /**
+         * Handles client disconnection. May have to update to handle sudden disconnection as opposed to controlled.
+         */
+
         try //Disconnects client
         {
             connection.close();
@@ -64,6 +77,10 @@ public class Server implements Runnable
 
     public void HandleClient()
     {
+        /**
+         * Method runs on each thread in run(), always ready to handle any new client requests.
+         */
+
         try //Handles client send/receive requests
         {
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -82,6 +99,10 @@ public class Server implements Runnable
 
     public void SendMenuFile()
     {
+        /**
+         * Runs whenever client connects and sends them most recent menu file. Menu file in progress.
+         */
+
         File menuFile = new File("<Menu directory>");
 
         try //Sends menu file as object to client
@@ -96,6 +117,7 @@ public class Server implements Runnable
         }
     }
 
+//    POTENTIALLY USEFUL CODE
 //    public void LogRequestInfo(String request)
 //    {
 //        try
@@ -114,9 +136,15 @@ public class Server implements Runnable
 
     public static void main(String[] args)
     {
+        /**
+         * Code for handling new clients where necessary using thread-pool architecture and the Executor interface.
+         * Uses clientCount and MAXCLIENTS to ensure the thread pool remains controlled by rejecting clients once
+         * limit has been reached.
+         */
+
         int port = 19999;
         clientCount = 0;
-        Executor executor = Executors.newFixedThreadPool(10);
+        Executor executor = Executors.newFixedThreadPool(MAXCLIENTS);
 
         try //Create server socket on specified port
         {
@@ -138,6 +166,10 @@ public class Server implements Runnable
     }
     public void run() //This code will run on each thread
     {
+        /**
+         * Code that runs on each thread. Sends new clients a menu file before waiting for a request from them.
+         */
+
         SendMenuFile();
         while (true)
         {
