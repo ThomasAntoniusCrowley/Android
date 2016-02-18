@@ -2,7 +2,7 @@
 import java.sql.*;
 
 public class DatabaseHandler {
-
+//safdsagfdsbafdsbvbds
 	/**
 	 * Class to handle connecting to and querying the database, then returning its results.
 	 * All interaction with the database should go through one instance of this class.
