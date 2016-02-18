@@ -4,13 +4,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 //made by sean
 public class DesktopGUI extends JFrame {
@@ -28,6 +22,54 @@ public class DesktopGUI extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
+
+        //JPANEL
+
+        JPanel pane = new JPanel();
+        pane.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        JLabel customerName = new JLabel("Customer Name: ");
+        JTextField customer = new JTextField();
+
+        JLabel partySize = new JLabel("Party Size: ");
+        int max = 20;
+        int min = 0;
+        int step = 1;
+        int init = 0;
+        SpinnerNumberModel model = new SpinnerNumberModel(init, min, max, step);
+        JSpinner size = new JSpinner(model);
+
+
+        JLabel date = new JLabel("Date: ");
+        JTextField dateField = new JTextField();
+
+        JLabel time = new JLabel("Time: ");
+        JComboBox timePick = new JComboBox();
+        timePick.addItem("18:00");
+        timePick.addItem("18:30");
+        timePick.addItem("19:00");
+        timePick.addItem("19:30");
+        timePick.addItem("20:00");
+        timePick.addItem("20:30");
+        timePick.addItem("21:00");
+        timePick.addItem("21:30");
+        timePick.addItem("22:00");
+
+
+        JLabel phoneNumber = new JLabel("Phone Number: ");
+        JTextField phone = new JTextField();
+
+        JLabel emailAddress = new JLabel("Email Address: ");
+        JTextField email = new JTextField();
+
+        JTextArea referenceNumber = new JTextArea();
+
+        JButton bookTable = new JButton("Book Table");
+
+        JButton sendEmailConfirmation = new JButton("Send Email Confirmation");
+
+        add(pane);
 
 
         //MENU BAR
