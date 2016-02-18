@@ -19,11 +19,16 @@ public class Server implements Runnable
         this.ID = i;
     }
 
-    public void ReceiveFromClient()
+    public void ReceiveOrder()
     {
-        try //Receives file information and image data from client
+        try //Receives order information from client
         {
-
+            ObjectInputStream ois = new ObjectInputStream(connection.getInputStream());
+            File file = (File) ois.readObject();
+            System.out.println("Read image data.");
+            FileOutputStream fos = new FileOutputStream("<Path to orders file>", true);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(file);
         }
         catch (Exception e)
         {
@@ -31,17 +36,17 @@ public class Server implements Runnable
         }
     }
 
-    public void SendToClient()
-    {
-        try //Handles request and sends appropriate data
-        {
-
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
+//    public void SendToClient()
+//    {
+//        try //Handles request and sends appropriate data
+//        {
+//
+//        }
+//        catch (Exception e)
+//        {
+//            e.printStackTrace();
+//        }
+//    }
 
     public void Disconnect()
     {
@@ -63,15 +68,31 @@ public class Server implements Runnable
         {
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String request = in.readLine();
-            if (request.equals("<Client request message>"))
+            if (request.equals("SENDING_ORDER"))
             {
-                //Response
+                ReceiveOrder();
             }
         }
         catch (Exception e)
         {
             Disconnect();
             Thread.currentThread().stop();
+        }
+    }
+
+    public void SendMenuFile()
+    {
+        File menuFile = new File("<Menu directory>");
+
+        try //Sends menu file as object to client
+        {
+            ObjectOutputStream outList = new ObjectOutputStream(connection.getOutputStream());
+            outList.writeObject(menuFile);
+            outList.flush();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
     }
 
@@ -117,6 +138,10 @@ public class Server implements Runnable
     }
     public void run() //This code will run on each thread
     {
-        //Loop to accept clients here
+        SendMenuFile();
+        while (true)
+        {
+            HandleClient();
+        }
     }
 }
