@@ -14,10 +14,23 @@ public class DesktopGUI extends JFrame {
         initUI();
     }
 
+    JLabel customerName = new JLabel("Customer Name: ");
+    JTextField customer = new JTextField();
+    JLabel date = new JLabel("Date: ");
+    JTextField dateField = new JTextField();
+    JLabel phoneNumber = new JLabel("Phone Number: ");
+    JTextField phone = new JTextField();
+    JLabel emailAddress = new JLabel("Email Address: ");
+    JTextField email = new JTextField();
+    JTextArea referenceNumber = new JTextArea();
+    JButton getReference = new JButton("Reference Number");
+    JButton sendEmailConfirmation = new JButton("Send Email Confirmation");
+
+
     private void initUI() {
 
 
-        setTitle("Restaurant Orders");
+        setTitle("Restaurant Bookings");
         setMinimumSize(new Dimension(700, 500));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -29,9 +42,6 @@ public class DesktopGUI extends JFrame {
         pane.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
-        JLabel customerName = new JLabel("Customer Name: ");
-        JTextField customer = new JTextField();
-
         JLabel partySize = new JLabel("Party Size: ");
         int max = 20;
         int min = 0;
@@ -39,10 +49,6 @@ public class DesktopGUI extends JFrame {
         int init = 0;
         SpinnerNumberModel model = new SpinnerNumberModel(init, min, max, step);
         JSpinner size = new JSpinner(model);
-
-
-        JLabel date = new JLabel("Date: ");
-        JTextField dateField = new JTextField();
 
         JLabel time = new JLabel("Time: ");
         JComboBox timePick = new JComboBox();
@@ -57,17 +63,25 @@ public class DesktopGUI extends JFrame {
         timePick.addItem("22:00");
 
 
-        JLabel phoneNumber = new JLabel("Phone Number: ");
-        JTextField phone = new JTextField();
-
-        JLabel emailAddress = new JLabel("Email Address: ");
-        JTextField email = new JTextField();
-
-        JTextArea referenceNumber = new JTextArea();
+        JLabel tableNumber = new JLabel("Table Number: ");
+        JComboBox tableNo = new JComboBox();
+        for (int i = 1; i <= 12; i++) {
+            tableNo.addItem(i);
+        }
 
         JButton bookTable = new JButton("Book Table");
+        class booktable implements ActionListener {
+            public void actionPerformed (ActionEvent a) {
+                customer.setText("");
+                dateField.setText("");
+                phone.setText("");
+                email.setText("");
+                referenceNumber.setText("");
+            }
+        }
+        bookTable.addActionListener(new booktable());
 
-        JButton sendEmailConfirmation = new JButton("Send Email Confirmation");
+
 
         add(pane);
 
@@ -80,7 +94,9 @@ public class DesktopGUI extends JFrame {
         menubar.add(file);
         JMenuItem exit = new JMenuItem("Exit");
         JMenuItem newOrder = new JMenuItem("New Order");
+        JMenuItem tableAvailability = new JMenuItem("Table Availability");
         file.add(newOrder);
+        file.add(tableAvailability);
         file.add(exit);
 
         class neworder implements ActionListener {
@@ -90,6 +106,13 @@ public class DesktopGUI extends JFrame {
             }
         }
         newOrder.addActionListener(new neworder());
+
+        class tablesavilable implements ActionListener {
+            public void actionPerformed (ActionEvent a) {
+                //opens table display
+            }
+        }
+        tableAvailability.addActionListener(new tablesavilable());
 
         class exitaction implements ActionListener {
             public void actionPerformed (ActionEvent e) {
