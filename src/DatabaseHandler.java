@@ -1,5 +1,5 @@
 
-
+import java.sql.*;
 
 public class DatabaseHandler {
 
@@ -13,6 +13,17 @@ public class DatabaseHandler {
 		 * Connects to a local database called Restaurant.db then checks if certain tables exist,
 		 * if they don't then it creates them. 
 		 */
+		
+		Connection database = null;
+		
+		try {
+			Class.forName("org.sqlite.JDBC");
+			database = DriverManager.getConnection("JDBC:SQL:Menu.db");
+		}
+		catch ( Exception e ) {
+		      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+		      System.exit(0);
+		}
 	}
 	
 	public int[] listActiveOrders() {
@@ -20,6 +31,8 @@ public class DatabaseHandler {
 		 * Returns the id's of all active orders in the database, these id's can then be handed to the returnBill function 
 		 * to get info on the order.
 		 */
+		int[] placeholder = {1,2,3};
+		return placeholder;
 	}
 	
 	public void closeOrder(int id) {
@@ -49,5 +62,6 @@ public class DatabaseHandler {
 		/**
 		 * Takes an id for a menu item and returns the price of that item in pence.
 		 */
+		return 5;
 	}
 }
