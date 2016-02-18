@@ -12,7 +12,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-
+//made by sean
 public class DesktopGUI extends JFrame {
 
     public DesktopGUI() {
@@ -69,14 +69,6 @@ public class DesktopGUI extends JFrame {
         }
         about.addActionListener(new info());
     }
-
-
-
-
-
-
-
-
 
     public static void main(String[] args) {
 
