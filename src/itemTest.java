@@ -15,7 +15,7 @@ public class itemTest {
     @Before
     public void setUp()
     {
-        beefBurger= new Item("Beef Burger", "Food", "Meat", 12.00 );
+        beefBurger= new Item("Beef Burger", "Food", "Burger", 12.00 );
     }
 
     @Test
@@ -24,5 +24,33 @@ public class itemTest {
         String name = beefBurger.getThisName();
 
         assertEquals("Name: ", "Beef Burger", name);
+    }
+
+
+    @Test
+    public void foodOrDrinkTest()
+    {
+        String foodOrDrink1 = beefBurger.getThisFoodOrDrink();
+
+        assertEquals("Food or Drink: ", "Food", foodOrDrink1);
+    }
+
+    @Test
+    public void getTypeTest()
+    {
+        String type = beefBurger.getThisCategory();
+
+        assertEquals("Type: ", "Burger", type);
+    }
+
+
+    @Test
+    public void priceTest()
+    {
+        double price1 = beefBurger.getThisPrice();
+
+        assertEquals("Price?: ", 12.00, price1);
+
+
     }
 }

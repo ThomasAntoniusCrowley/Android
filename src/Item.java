@@ -1,6 +1,12 @@
 import java.text.DecimalFormat;
 import java.util.Arrays;
 
+/**
+ * created by Jordan
+ *
+ *
+ */
+
 public class Item {
 
 	private String thisName;
