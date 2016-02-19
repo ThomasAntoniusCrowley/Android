@@ -8,21 +8,64 @@ public class DatabaseHandler {
 	 * All interaction with the database should go through one instance of this class.
 	 */
 	
-	private DatabaseHandler() {
+	public static void main( String[] args) {
 		/**
 		 * Connects to a local database called Restaurant.db then checks if certain tables exist,
 		 * if they don't then it creates them. 
 		 */
 		
+		//Basic variables for connecting to the database
 		Connection database = null;
+		String databaseFilePath = "jdbc:mysql://localhost/restaurant";
+		String databaseJDBCDriver = "com.mysql.jdbc.Driver";
 		
+		//Incredibly insecure username and password
+		String mySQLUsername = "root";
+		String mySQLPassword = "password";
+		
+		//Connect to the database on my local machine, displaying messages if it works
 		try {
-			Class.forName("org.sqlite.JDBC");
-			database = DriverManager.getConnection("JDBC:SQL:Menu.db");
+			Class.forName(databaseJDBCDriver);
+			database = DriverManager.getConnection(databaseFilePath, mySQLUsername, mySQLPassword);
+			
+			if (database != null) {
+				System.out.println("Successfully connected to database: " + databaseFilePath);
+			}
 		}
 		catch ( Exception e ) {
-		      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-		      System.exit(0);
+			System.out.println("Error connecting to database");
+		      e.printStackTrace();
+		}
+		
+		//Create to execute a statement, storing the output in variable 'result'
+		ResultSet results = null;
+		try {
+			Statement statement = null;
+			System.out.println("Building SQL statement");
+			
+			statement = database.createStatement();
+			String queryText = "SELECT * FROM menu";
+			
+			results = statement.executeQuery(queryText);
+		}
+		catch (Exception e){
+			System.out.println("Error when creating and executing query");
+			e.printStackTrace();
+		}
+		
+		//Extract usable data from the ResultSet object
+		try {
+			while (results.next()) {
+				int id = results.getInt("id");
+				String category = results.getString("category");
+				String name = results.getString("name");
+				int price = results.getInt("price");
+				System.out.printf("ID: %d, Category: %s, Name: %s, Price: %d \n", id, category, name, price);
+			}
+		}
+		catch (Exception e) {
+			System.out.println("Error reading data from result set");
+			e.printStackTrace();
 		}
 	}
 	
