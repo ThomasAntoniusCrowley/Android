@@ -1,14 +1,15 @@
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
+
 
 /**
  * Created by Thomas on 2/18/2016.
  *
  * jUnit tests for item class'
  */
-public class itemTest {
+public class ItemTest {
 
     private Item beefBurger;
 
@@ -48,9 +49,10 @@ public class itemTest {
     public void priceTest()
     {
         double price1 = beefBurger.getThisPrice();
-
-        assertEquals("Price?: ", 12.00, price1);
-
-
+        boolean priceCheck = false;
+        if (price1 == 12.00) {
+            priceCheck = true;
+        }
+        assertEquals(priceCheck, true);
     }
 }
