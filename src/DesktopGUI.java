@@ -1,7 +1,4 @@
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.UUID;
@@ -23,10 +20,15 @@ public class DesktopGUI extends JFrame {
     JTextField phone = new JTextField();
     JLabel emailAddressLabel = new JLabel("Email Address: ");
     JTextField email = new JTextField();
-    JLabel refLabel = new JLabel();
+    JLabel partySizeLabel = new JLabel("Party Size: ");
+    JLabel timeLabel = new JLabel("Time: ");
+    JLabel bookingLengthLabel = new JLabel("Length of Time: ");
+    JLabel tableNumberLabel = new JLabel("Table Number: ");
+    JLabel refLabel = new JLabel("Reference Number: ");
     JTextField referenceNumber = new JTextField();
     JButton getReference = new JButton("Reference Number");
     JButton sendEmailConfirmation = new JButton("Send Email Confirmation");
+    JButton bookTable = new JButton("Book Table");
 
 
     private void initUI() {
@@ -37,23 +39,17 @@ public class DesktopGUI extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-
-        //JPANEL
-
-        JPanel pane = new JPanel();
-        pane.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-
-        JLabel partySizeLabel = new JLabel("Party Size: ");
+        //partySizeLabel
         int max = 20;
         int min = 0;
         int step = 1;
         int init = 0;
         SpinnerNumberModel model = new SpinnerNumberModel(init, min, max, step);
-        JSpinner size = new JSpinner(model);
+        final JSpinner size = new JSpinner(model);
 
-        JLabel timeLabel = new JLabel("Time: ");
-        JComboBox timePick = new JComboBox();
+
+        //timeLabel
+        final JComboBox timePick = new JComboBox();
         timePick.addItem("18:00");
         timePick.addItem("18:30");
         timePick.addItem("19:00");
@@ -64,8 +60,8 @@ public class DesktopGUI extends JFrame {
         timePick.addItem("21:30");
         timePick.addItem("22:00");
 
-        JLabel bookingLengthLabel = new JLabel("Length of Time: ");
-        JComboBox lengthTime = new JComboBox();
+        //bookingLengthLabel
+        final JComboBox lengthTime = new JComboBox();
         lengthTime.addItem("18:00-19:00");
         lengthTime.addItem("18:30-19:30");
         lengthTime.addItem("19:00-20:00");
@@ -80,15 +76,151 @@ public class DesktopGUI extends JFrame {
 
 
 
-        JLabel tableNumberLabel = new JLabel("Table Number: ");
-        JComboBox tableNo = new JComboBox();
+        //tableNumberLabel
+        final JComboBox tableNo = new JComboBox();
         for (int i = 1; i <= 12; i++) {
             tableNo.addItem(i);
         }
 
+        //JPANEL
+
+        JPanel head = new JPanel();
+        head.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        gbc.weighty = 0.5;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
+        head.add(customerNameLabel, gbc);
+
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.anchor = GridBagConstraints.CENTER;
+        head.add(dateLabel, gbc);
+
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        head.add(phoneNumberLabel, gbc);
+
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridwidth = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.anchor = GridBagConstraints.CENTER;
+        head.add(emailAddressLabel, gbc);
+
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridwidth = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.anchor = GridBagConstraints.CENTER;
+        head.add(partySizeLabel, gbc);
+
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridwidth = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.anchor = GridBagConstraints.CENTER;
+        head.add(timeLabel, gbc);
+
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridwidth = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        gbc.anchor = GridBagConstraints.CENTER;
+        head.add(bookingLengthLabel, gbc);
+
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridwidth = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 7;
+        gbc.anchor = GridBagConstraints.CENTER;
+        head.add(tableNumberLabel, gbc);
+
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridwidth = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 8;
+        gbc.anchor = GridBagConstraints.CENTER;
+        head.add(refLabel, gbc);
+
+        //next column
+        gbc.weightx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.gridwidth = 3;
+        head.add(customer, gbc);
+
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.gridwidth = 3;
+        head.add(dateField, gbc);
+
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.gridwidth = 3;
+        head.add(phone, gbc);
+
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        gbc.gridwidth = 3;
+        head.add(email, gbc);
+
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        gbc.gridwidth = 3;
+        head.add(size, gbc);
+
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 1;
+        gbc.gridy = 5;
+        gbc.gridwidth = 3;
+        head.add(timePick, gbc);
+
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 1;
+        gbc.gridy = 6;
+        gbc.gridwidth = 3;
+        head.add(lengthTime, gbc);
+
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 1;
+        gbc.gridy = 7;
+        gbc.gridwidth = 3;
+        head.add(tableNo, gbc);
+
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 1;
+        gbc.gridy = 8;
+        gbc.gridwidth = 2;
+        head.add(referenceNumber, gbc);
 
 
-        JButton bookTable = new JButton("Book Table");
+        JPanel foot = new JPanel();
+        foot.setLayout(new BorderLayout());
+
+        foot.add(getReference, BorderLayout.WEST);
+        foot.add(bookTable, BorderLayout.CENTER);
+        foot.add(sendEmailConfirmation, BorderLayout.EAST);
+
+
+        add(head, BorderLayout.NORTH);
+        add(foot, BorderLayout.SOUTH);
+
+
+
+
+
         class booktable implements ActionListener {
             public void actionPerformed (ActionEvent a) {
                 customer.setText("");
@@ -96,6 +228,15 @@ public class DesktopGUI extends JFrame {
                 phone.setText("");
                 email.setText("");
                 referenceNumber.setText("");
+                timePick.setSelectedIndex(0);
+                lengthTime.setSelectedItem(0);
+                tableNo.setSelectedIndex(0);
+                //size.setValue("1");
+                //tableNo.remove(0);
+                //timePick.remove
+
+
+
             }
         }
         bookTable.addActionListener(new booktable());
@@ -120,7 +261,7 @@ public class DesktopGUI extends JFrame {
 
 
 
-        add(pane);
+
 
 
         //MENU BAR
