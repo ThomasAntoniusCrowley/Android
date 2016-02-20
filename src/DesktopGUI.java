@@ -4,9 +4,10 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.UUID;
 import javax.swing.*;
 
-//made by sean
+//made by Sean O'Connor
 public class DesktopGUI extends JFrame {
 
     public DesktopGUI() {
@@ -14,15 +15,16 @@ public class DesktopGUI extends JFrame {
         initUI();
     }
 
-    JLabel customerName = new JLabel("Customer Name: ");
+    JLabel customerNameLabel = new JLabel("Customer Name: ");
     JTextField customer = new JTextField();
-    JLabel date = new JLabel("Date: ");
+    JLabel dateLabel = new JLabel("Date: ");
     JTextField dateField = new JTextField();
-    JLabel phoneNumber = new JLabel("Phone Number: ");
+    JLabel phoneNumberLabel = new JLabel("Phone Number: ");
     JTextField phone = new JTextField();
-    JLabel emailAddress = new JLabel("Email Address: ");
+    JLabel emailAddressLabel = new JLabel("Email Address: ");
     JTextField email = new JTextField();
-    JTextArea referenceNumber = new JTextArea();
+    JLabel refLabel = new JLabel();
+    JTextField referenceNumber = new JTextField();
     JButton getReference = new JButton("Reference Number");
     JButton sendEmailConfirmation = new JButton("Send Email Confirmation");
 
@@ -42,7 +44,7 @@ public class DesktopGUI extends JFrame {
         pane.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
-        JLabel partySize = new JLabel("Party Size: ");
+        JLabel partySizeLabel = new JLabel("Party Size: ");
         int max = 20;
         int min = 0;
         int step = 1;
@@ -50,7 +52,7 @@ public class DesktopGUI extends JFrame {
         SpinnerNumberModel model = new SpinnerNumberModel(init, min, max, step);
         JSpinner size = new JSpinner(model);
 
-        JLabel time = new JLabel("Time: ");
+        JLabel timeLabel = new JLabel("Time: ");
         JComboBox timePick = new JComboBox();
         timePick.addItem("18:00");
         timePick.addItem("18:30");
@@ -62,12 +64,29 @@ public class DesktopGUI extends JFrame {
         timePick.addItem("21:30");
         timePick.addItem("22:00");
 
+        JLabel bookingLengthLabel = new JLabel("Length of Time: ");
+        JComboBox lengthTime = new JComboBox();
+        lengthTime.addItem("18:00-19:00");
+        lengthTime.addItem("18:30-19:30");
+        lengthTime.addItem("19:00-20:00");
+        lengthTime.addItem("19:30-20:30");
+        lengthTime.addItem("20:00-21:00");
+        lengthTime.addItem("20:30-21:30");
+        lengthTime.addItem("21:00-22:00");
+        lengthTime.addItem("21:30-22:30");
+        lengthTime.addItem("22:00-23:00");
 
-        JLabel tableNumber = new JLabel("Table Number: ");
+
+
+
+
+        JLabel tableNumberLabel = new JLabel("Table Number: ");
         JComboBox tableNo = new JComboBox();
         for (int i = 1; i <= 12; i++) {
             tableNo.addItem(i);
         }
+
+
 
         JButton bookTable = new JButton("Book Table");
         class booktable implements ActionListener {
@@ -80,6 +99,24 @@ public class DesktopGUI extends JFrame {
             }
         }
         bookTable.addActionListener(new booktable());
+
+
+        class refnumber implements ActionListener {
+            public void actionPerformed (ActionEvent a) {
+                String ref = UUID.randomUUID().toString();
+                referenceNumber.setText(ref);
+            }
+        }
+        getReference.addActionListener(new refnumber());
+
+
+
+        class email implements ActionListener {
+            public void actionPerformed (ActionEvent a) {
+                //RUNS SEND EMAIL CLASS
+            }
+        }
+        sendEmailConfirmation.addActionListener(new email());
 
 
 
