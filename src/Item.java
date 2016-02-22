@@ -22,7 +22,7 @@ public class Item {
 	
 	private String itemString;
 	
-	//Getter methods for item object parameters
+	//Getter methods for Item object parameters
 	public String getThisName() {
 		return thisName;
 	}
