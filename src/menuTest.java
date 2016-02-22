@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Thomas on 2/18/2016.
@@ -30,13 +31,11 @@ public class MenuTest {
     @Test
     public void addTest()
     {
-//        menuTest.addItem(beefBurger);
-//
-//        int menuLength = menuTest.size();
-//
-//        assertEquals("Menu size: ", 1, menuLength);
-//
-//
+        menuTest.addItem(beefBurger);
+
+        int testSize = menuTest.getMenuSize();
+
+        assertTrue(testSize==1);
     }
 
     @Test

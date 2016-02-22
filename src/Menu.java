@@ -68,6 +68,17 @@ public class Menu {
         }
         return price;
     }
+
+    public int getMenuSize()
+    {
+        int menuCount = 0;
+        for (Item i: menu)
+        {
+            menuCount += 1;
+        }
+
+        return menuCount;
+    }
 }
 
 
