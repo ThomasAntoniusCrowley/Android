@@ -263,7 +263,6 @@ public class DesktopGUI extends JFrame {
 
 
 
-
         //MENU BAR
         JMenuBar menubar = new JMenuBar();
         setJMenuBar(menubar);
@@ -278,7 +277,7 @@ public class DesktopGUI extends JFrame {
         file.add(exit);
 
         class neworder implements ActionListener {
-            public void actionPerformed (ActionEvent a) {
+            public void actionPerformed(ActionEvent a) {
                 DesktopGUI desk = new DesktopGUI();
                 desk.setVisible(true);
             }
@@ -293,7 +292,7 @@ public class DesktopGUI extends JFrame {
         tableAvailability.addActionListener(new tablesavilable());
 
         class exitaction implements ActionListener {
-            public void actionPerformed (ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 System.exit(0);
             }
         }
@@ -305,7 +304,7 @@ public class DesktopGUI extends JFrame {
         help.add(about);
 
         class info implements ActionListener {
-            public void actionPerformed (ActionEvent a) {
+            public void actionPerformed(ActionEvent a) {
                 JOptionPane.showMessageDialog(null, "Software Created By Team Mongoose",
                         "About", JOptionPane.INFORMATION_MESSAGE);
             }
