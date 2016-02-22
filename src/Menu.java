@@ -2,7 +2,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Thomas on 2/18/2016.
+ * Created by Thomas Crowley on 2/18/2016.
+ *
+ * The Menu class creates a menu containing all the relevant food and drink information
  */
 public class Menu {
     protected List<Item> menu = new ArrayList<Item>();
@@ -16,7 +18,8 @@ public class Menu {
     }
 
 
-    public void addItem(Item item) {
+    public void addItem(Item item)
+    {
         if (menu.contains(item)) {
             throw new IllegalArgumentException("item already present");
         } else {
@@ -33,7 +36,8 @@ public class Menu {
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         String menuString = "";
         for (Item thisItem : menu) {
             if (thisItem != null) {
@@ -44,7 +48,25 @@ public class Menu {
                 menuString += "\n";
             }
         }
-        return menuString;
+        return menuString.trim();
+    }
+
+    public double getItemPrice(Item item)
+    {
+        double price = 0;
+        if (menu.contains(item)) {
+
+            for (Item i : menu) {
+                if (i == item) {
+                    price = i.getThisPrice();
+                }
+            }
+        }
+        else
+        {
+            throw new IllegalArgumentException("item not present");
+        }
+        return price;
     }
 }
 

@@ -72,7 +72,7 @@ public class Bill {
 				billString += "\n";
 			}
 		}
-		return billString;
+		return billString.trim();
 	}
 	
 	static public void main(String[] args) {

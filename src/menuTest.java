@@ -11,10 +11,11 @@ import static org.junit.Assert.assertEquals;
  *
  * test for Menu.java class
  */
-public class menuTest {
+public class MenuTest {
 
     private Menu menuTest;
     private Item beefBurger;
+    private Item mojito;
     private List<String> testList = new ArrayList<String>();
 
 
@@ -23,6 +24,7 @@ public class menuTest {
     {
          menuTest = new Menu();
         beefBurger= new Item("Beef Burger", "Food", "Burger", 12.00 );
+        mojito = new Item("Mojito", "Drink", "Cocktail", 4.50);
     }
 
     @Test
@@ -35,8 +37,37 @@ public class menuTest {
 //        assertEquals("Menu size: ", 1, menuLength);
 //
 //
+    }
+
+    @Test
+    public void toStringTest()
+    {
+        menuTest.addItem(beefBurger);
+        menuTest.addItem(mojito);
+        String testString = menuTest.toString();
 
 
+        System.out.println(testString);
+
+        assertEquals("toString?: ", "Beef Burger Food Burger £12.0" + "\n" + "Mojito Drink Cocktail £4.5", testString);
+    }
+
+    @Test
+    public void getPriceTest()
+    {
+        menuTest.addItem(beefBurger);
+        menuTest.addItem(mojito);
+
+        double price1 = menuTest.getItemPrice(mojito);
+        double price2 = menuTest.getItemPrice(beefBurger);
+        boolean priceCheck = false;
+        if (price1 == 4.50 && price2 == 12.00)
+        {
+            priceCheck = true;
+        }
+
+
+        assertEquals(priceCheck, true);
     }
 
 }
