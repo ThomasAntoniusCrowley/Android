@@ -1,6 +1,12 @@
 import java.text.DecimalFormat;
 import java.util.Arrays;
 
+/**
+ * created by Jordan
+ *
+ *
+ */
+
 public class Item {
 
 	private String thisName;
@@ -102,7 +108,8 @@ public class Item {
 						thisCategory + " £" + thisPrice);
 		return itemString;
 	}
-	
+
+
 	public static void main(String[] args) {
 		Item item = new Item("Chicken", "Food", "Meat", 10.66);
 		item.showCategories();
