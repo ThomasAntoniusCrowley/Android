@@ -27,10 +27,19 @@ public class Menu {
         }
     }
 
-    public void removeItem(Item item, int item_position) {
+    public void removeMenuItem(Item item) {
+        int menuSize = getMenuSize();
         if (menu.contains(item)) {
-            menu.remove(item_position);
-        } else {
+            for (int j =0; j<menuSize; j+=1)
+            {
+                if (item == menu.get(j))
+                {
+                    menu.remove(j);
+                }
+             }
+        }
+        else
+        {
             throw new IllegalArgumentException("item not present");
         }
     }

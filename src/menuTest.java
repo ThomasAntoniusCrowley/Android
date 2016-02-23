@@ -39,6 +39,20 @@ public class MenuTest {
     }
 
     @Test
+    public void removeTest()
+    {
+        menuTest.addItem(beefBurger);
+        menuTest.addItem(mojito);
+        int startSize = menuTest.getMenuSize();
+        menuTest.removeMenuItem(mojito);
+        int endSize = menuTest.getMenuSize();
+        int diff = startSize - endSize;
+
+        assertTrue(diff == 1);
+
+    }
+
+    @Test
     public void toStringTest()
     {
         menuTest.addItem(beefBurger);
