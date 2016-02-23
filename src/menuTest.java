@@ -12,7 +12,7 @@ import static org.junit.Assert.assertTrue;
  *
  * test for Menu.java class
  */
-public class menuTest {
+public class MenuTest {
 
     private Menu menuTest;
     private Item beefBurger;
@@ -49,6 +49,7 @@ public class menuTest {
         int diff = startSize - endSize;
 
         assertTrue(diff == 1);
+        //String menuString = menu
 
     }
 
