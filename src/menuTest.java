@@ -12,7 +12,7 @@ import static org.junit.Assert.assertTrue;
  *
  * test for Menu.java class
  */
-public class menuTest {
+public class MenuTest {
 
     private Menu menuTest;
     private Item beefBurger;
@@ -36,6 +36,21 @@ public class menuTest {
         int testSize = menuTest.getMenuSize();
 
         assertTrue(testSize==1);
+    }
+
+    @Test
+    public void removeTest()
+    {
+        menuTest.addItem(beefBurger);
+        menuTest.addItem(mojito);
+        int startSize = menuTest.getMenuSize();
+        menuTest.removeMenuItem(mojito);
+        int endSize = menuTest.getMenuSize();
+        int diff = startSize - endSize;
+
+        assertTrue(diff == 1);
+        //String menuString = menu
+
     }
 
     @Test
