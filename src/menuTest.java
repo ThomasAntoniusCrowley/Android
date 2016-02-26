@@ -1,6 +1,7 @@
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +50,8 @@ public class MenuTest {
         int diff = startSize - endSize;
 
         assertTrue(diff == 1);
-        //String menuString = menu
+        String menuString = menuTest.toString();
+        assertEquals("check the correct item has been removed: ", menuString, "Beef Burger Food Burger £12.0");
 
     }
 
@@ -83,5 +85,25 @@ public class MenuTest {
 
         assertEquals(priceCheck, true);
     }
+
+    @Test
+    public void getItemTest()
+    {
+        menuTest.addItem(beefBurger);
+        menuTest.addItem(mojito);
+
+        Item desiredItem = menuTest.getItem(beefBurger);
+
+        assertTrue(desiredItem==beefBurger);
+    }
+
+    @Test
+    public void toFileTest() throws FileNotFoundException {
+        menuTest.addItem(beefBurger);
+        menuTest.addItem(mojito);
+
+        menuTest.toFile("testfile.txt");
+    }
+
 
 }
