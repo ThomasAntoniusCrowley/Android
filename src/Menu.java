@@ -6,42 +6,45 @@ import java.util.List;
 
 /**
  * Created by Thomas Crowley on 2/18/2016.
- *
+ * <p>
  * The Menu class creates a menu containing all the relevant food and drink information
  */
-public class Menu {
+public class Menu
+{
     protected List<Item> menu = new ArrayList<Item>();
 
-    public Menu() {
-       // menu = new ArrayList<Item>();
+    public Menu()
+    {
+        // menu = new ArrayList<Item>();
     }
 
-    public boolean containsFood(Item item) {
-        return menu.contains(item);
-    }
+
 
 
     public void addItem(Item item)
     {
-        if (menu.contains(item)) {
+        if (menu.contains(item))
+        {
             throw new IllegalArgumentException("item already present");
-        } else {
+        } else
+        {
             menu.add(item);
         }
     }
 
-    public void removeMenuItem(Item item) {
+    public void removeMenuItem(Item item)
+    {
         int menuSize = getMenuSize();
-        if (menu.contains(item)) {
-            for (int j =0; j<menuSize; j+=1)
+        if (menu.contains(item))
+        {
+            for (int j = 0; j < menuSize; j += 1)
             {
                 if (item == menu.get(j))
                 {
                     menu.remove(j);
                 }
-             }
-        }
-        else
+            }
+        } else
         {
             throw new IllegalArgumentException("item not present");
         }
@@ -51,11 +54,14 @@ public class Menu {
     public String toString()
     {
         String menuString = "";
-        for (Item thisItem : menu) {
-            if (thisItem != null) {
+        for (Item thisItem : menu)
+        {
+            if (thisItem != null)
+            {
                 menuString += thisItem.toString();
                 menuString += "\n";
-            } else {
+            } else
+            {
                 menuString += "<Empty element>";
                 menuString += "\n";
             }
@@ -66,15 +72,17 @@ public class Menu {
     public double getItemPrice(Item item)
     {
         double price = 0;
-        if (menu.contains(item)) {
+        if (menu.contains(item))
+        {
 
-            for (Item i : menu) {
-                if (i == item) {
+            for (Item i : menu)
+            {
+                if (i == item)
+                {
                     price = i.getThisPrice();
                 }
             }
-        }
-        else
+        } else
         {
             throw new IllegalArgumentException("item not present");
         }
@@ -84,17 +92,17 @@ public class Menu {
     public Item getItem(Item item)
     {
         int menuSize = getMenuSize();
-        Item desired =null;
-        if (menu.contains(item)) {
-            for (int j =0; j<menuSize; j+=1)
+        Item desired = null;
+        if (menu.contains(item))
+        {
+            for (int j = 0; j < menuSize; j += 1)
             {
                 if (item == menu.get(j))
                 {
-                   desired = menu.get(j);
+                    desired = menu.get(j);
                 }
             }
-        }
-        else
+        } else
         {
             throw new IllegalArgumentException("item not present");
         }
@@ -104,7 +112,7 @@ public class Menu {
     public int getMenuSize()
     {
         int menuCount = 0;
-        for (Item i: menu)
+        for (Item i : menu)
         {
             menuCount += 1;
         }
@@ -146,13 +154,16 @@ public class Menu {
             }
             if (FOrD == "Food")
             {
-                if (category == "Starter") {
+                if (category == "Starter")
+                {
                     starterStringList.add(menuStringFormat);
                 }
-                if (category == "Desert") {
+                if (category == "Desert")
+                {
                     desertStringList.add(menuStringFormat);
 
-                } else {
+                } else
+                {
                     mainStringList.add(menuStringFormat);
                 }
             }

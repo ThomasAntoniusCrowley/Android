@@ -33,6 +33,12 @@ public class BillTest
     }
 
     @Test
+    public void addTest()
+    {
+
+    }
+
+    @Test
     public void toFileTest() throws FileNotFoundException
     {
 
