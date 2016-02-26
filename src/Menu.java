@@ -124,6 +124,7 @@ public class Menu {
         ArrayList<String> starterStringList = new ArrayList<String>();
         ArrayList<String> mainStringList = new ArrayList<String>();
         ArrayList<String> desertStringList = new ArrayList<String>();
+        ArrayList<ArrayList<String>> menuArray = new ArrayList<ArrayList<String>>();
 
         drinkStringList.add("Drinks:");
         drinkStringList.add(" ");
@@ -146,52 +147,52 @@ public class Menu {
             if (FOrD == "Drink")
             {
                 drinkStringList.add(menuStringFormat);
+
             }
-            if (category == "Starter")
+            if (FOrD == "Food")
             {
-                starterStringList.add(menuStringFormat);
-            }
-            if (category == "Desert")
-            {
-                desertStringList.add(menuStringFormat);
-
-            }
-            else
-            {
-                mainStringList.add(menuStringFormat);
-            }
-
-            drinkStringList.add(" ");
-            starterStringList.add(" ");
-            mainStringList.add(" ");
-            desertStringList.add(" ");
-
-            // make an array of the arrays
-
-            ArrayList<ArrayList<String>> menuArray = new ArrayList<ArrayList<String>>();
-            menuArray.add(drinkStringList);
-            menuArray.add(starterStringList);
-            menuArray.add(mainStringList);
-            menuArray.add(desertStringList);
-
-            //write the info to file
-
-
-
-                PrintWriter pw = new PrintWriter(new FileOutputStream(file_name));
-
-                for (ArrayList<String> m : menuArray)
-                {
-                    for (String n : m)
-                    {
-                        pw.println(n);
-                    }
-
+                if (category == "Starter") {
+                    starterStringList.add(menuStringFormat);
                 }
-                pw.close();
+                if (category == "Desert") {
+                    desertStringList.add(menuStringFormat);
+
+                } else {
+                    mainStringList.add(menuStringFormat);
+                }
+            }
+        }
+        //write the info to file
+
+        // make an array of the arrays
+
+        drinkStringList.add(" ");
+        starterStringList.add(" ");
+        mainStringList.add(" ");
+        desertStringList.add(" ");
+        drinkStringList.add(" ");
+        starterStringList.add(" ");
+        mainStringList.add(" ");
+        desertStringList.add(" ");
+
+        menuArray = new ArrayList<ArrayList<String>>();
+        menuArray.add(drinkStringList);
+        menuArray.add(starterStringList);
+        menuArray.add(mainStringList);
+        menuArray.add(desertStringList);
+
+
+        PrintWriter pw = new PrintWriter(new FileOutputStream(file_name));
+
+        for (ArrayList<String> m : menuArray)
+        {
+            for (String n : m)
+            {
+                pw.println(n);
+            }
 
         }
-
+        pw.close();
     }
 }
 

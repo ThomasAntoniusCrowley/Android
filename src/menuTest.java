@@ -19,13 +19,15 @@ public class MenuTest {
     private Item beefBurger;
     private Item mojito;
     private List<String> testList = new ArrayList<String>();
+    private Item veggieBurger;
 
 
     @Before
     public void setUp()
     {
-         menuTest = new Menu();
+        menuTest = new Menu();
         beefBurger= new Item("Beef Burger", "Food", "Burger", 12.00 );
+        veggieBurger= new Item("Veggie Burger", "Food", "Burger", 11.50);
         mojito = new Item("Mojito", "Drink", "Cocktail", 4.50);
     }
 
@@ -101,6 +103,7 @@ public class MenuTest {
     public void toFileTest() throws FileNotFoundException {
         menuTest.addItem(beefBurger);
         menuTest.addItem(mojito);
+        menuTest.addItem(veggieBurger);
 
         menuTest.toFile("testfile.txt");
     }
