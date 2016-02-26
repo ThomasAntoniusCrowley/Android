@@ -18,7 +18,7 @@ public class MenuTest {
     private Menu menuTest;
     private Item beefBurger;
     private Item mojito;
-    private List<String> testList = new ArrayList<String>();
+    private Item guiness;
     private Item veggieBurger;
 
 
@@ -29,6 +29,7 @@ public class MenuTest {
         beefBurger= new Item("Beef Burger", "Food", "Burger", 12.00 );
         veggieBurger= new Item("Veggie Burger", "Food", "Burger", 11.50);
         mojito = new Item("Mojito", "Drink", "Cocktail", 4.50);
+        guiness = new Item("Guiness", "Drink", "Beer", 2.80);
     }
 
     @Test
@@ -104,8 +105,9 @@ public class MenuTest {
         menuTest.addItem(beefBurger);
         menuTest.addItem(mojito);
         menuTest.addItem(veggieBurger);
+        menuTest.addItem(guiness);
 
-        menuTest.toFile("testfile.txt");
+        menuTest.toFile("menuTestFile.txt");
     }
 
 

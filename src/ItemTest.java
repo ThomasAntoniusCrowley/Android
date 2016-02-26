@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 /**
  * Created by Thomas on 2/18/2016.
  *
- * jUnit tests for item class'
+ * jUnit tests for item class
  */
 public class ItemTest {
 
