@@ -145,7 +145,7 @@ public class Menu
             String priceString = String.valueOf(price);
             String category = i.getThisCategory();
             String FOrD = i.getThisFoodOrDrink();
-            String menuStringFormat = name + "............" + priceString;
+            String menuStringFormat = name + " ............ " + priceString;
             // put the different catorgories of food in different arrays
             if (FOrD == "Drink")
             {

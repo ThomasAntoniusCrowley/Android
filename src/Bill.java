@@ -119,7 +119,7 @@ public class Bill {
             String name = i.getThisName();
             double price = i.getThisPrice();
             String priceString = String.valueOf(price);
-            String billString = name + "..........." + priceString;
+            String billString = name + " ........... " + priceString;
 
             billArray.add(billString);
 
@@ -128,6 +128,7 @@ public class Bill {
         String preVatString = "Total .......... " + priceBeforeVat;
         String finalPriceString = String.valueOf(addVAT());
         finalPriceString = "Total (inc Vat) ............ " + finalPriceString;
+        billArray.add("");
         billArray.add(preVatString);
         billArray.add(finalPriceString);
 
