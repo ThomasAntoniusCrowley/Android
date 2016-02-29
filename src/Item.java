@@ -4,7 +4,7 @@ import java.util.Arrays;
 /**
  * created by Jordan
  *
- *
+ * Class to represent a food or drink item
  */
 
 public class Item {
@@ -22,7 +22,7 @@ public class Item {
 	
 	private String itemString;
 	
-	//Sort setters
+	//Getter methods for Item object parameters
 	public String getThisName() {
 		return thisName;
 	}
@@ -39,17 +39,19 @@ public class Item {
 		return thisPrice;
 	}
 
-//Setters not needed as any item input is final (if its done with it can be removed)
-	
+    //Setters not needed as any item input is final (if its done with it can be removed)
+
+	//Initialises variables, creates valid categories list and tests parameters
 	Item(String name, String foodOrDrink, String category, double price) {
 		thisName = name;
 		thisFoodOrDrink = foodOrDrink;
 		thisCategory = category;
 		thisPrice = price;
-		
+
+		//Potentially incomplete
 		categoriesSize = 30;
 		categories = new String[categoriesSize];
-		
+
 		categories[0] = "Fish";
 		categories[1] = "Meat";
 		categories[2] = "Starter";
@@ -61,19 +63,21 @@ public class Item {
 		categories[7] = "Soft Drink";
 		categories[8] = "Wine";
 		categories[9] = "Cocktail";
-		
+		categories[10] = "Beer";
 		testCategory();
 		testFoodOrDrink();
 		testPrice();
 	}
-	
+
+	//Ensures a valid category has been input
 	public void testCategory() {
 		if (!(Arrays.asList(categories).contains(thisCategory))) {
 			throw new IllegalArgumentException("Error: invalid " +
 					"category, ensure each word is capitalized.");
 		}
 	}
-	
+
+	//Ensures a valid keyword has been input for food or drink
 	public void testFoodOrDrink() {
 		if (!(thisFoodOrDrink.equals("Food") || 
 				thisFoodOrDrink.equals("Drink"))) {
@@ -82,7 +86,8 @@ public class Item {
 					"or 'Drink' only");
 		}		
 	}
-	
+
+	//Ensures the price entered is to 2 decimal places
 	public void testPrice() {
 		modulo = thisPrice % 1;
 		decimalTester = new DecimalFormat("#.00");
@@ -94,7 +99,8 @@ public class Item {
 					"up to 2 decimal places.");
 		}
 	}
-	
+
+	//Prints all valid categories for the user
 	public void showCategories() {
 		System.out.println("Valid Categories: ");
 		System.out.println("");
@@ -102,7 +108,8 @@ public class Item {
 			System.out.println(thisString);
 		}
 	}
-	
+
+	//Returns a formatted string of the Item
 	@Override public String toString() {
 		itemString = (thisName + " " + thisFoodOrDrink + " " + 
 						thisCategory + " £" + thisPrice);
@@ -111,8 +118,7 @@ public class Item {
 
 
 	public static void main(String[] args) {
-		Item item = new Item("Chicken", "Food", "Meat", 10.66);
-		item.showCategories();
+
 	}
 }
 

@@ -1,9 +1,7 @@
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import java.io.FileNotFoundException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -12,20 +10,23 @@ import static org.junit.Assert.assertTrue;
  *
  * test for Menu.java class
  */
-public class menuTest {
+public class MenuTest {
 
     private Menu menuTest;
     private Item beefBurger;
     private Item mojito;
-    private List<String> testList = new ArrayList<String>();
+    private Item guiness;
+    private Item veggieBurger;
 
 
     @Before
     public void setUp()
     {
-         menuTest = new Menu();
+        menuTest = new Menu();
         beefBurger= new Item("Beef Burger", "Food", "Burger", 12.00 );
+        veggieBurger= new Item("Veggie Burger", "Food", "Burger", 11.50);
         mojito = new Item("Mojito", "Drink", "Cocktail", 4.50);
+        guiness = new Item("Guiness", "Drink", "Beer", 2.80);
     }
 
     @Test
@@ -36,6 +37,22 @@ public class menuTest {
         int testSize = menuTest.getMenuSize();
 
         assertTrue(testSize==1);
+    }
+
+    @Test
+    public void removeTest()
+    {
+        menuTest.addItem(beefBurger);
+        menuTest.addItem(mojito);
+        int startSize = menuTest.getMenuSize();
+        menuTest.removeMenuItem(mojito);
+        int endSize = menuTest.getMenuSize();
+        int diff = startSize - endSize;
+
+        assertTrue(diff == 1);
+        String menuString = menuTest.toString();
+        assertEquals("check the correct item has been removed: ", menuString, "Beef Burger Food Burger £12.0");
+
     }
 
     @Test
@@ -68,5 +85,27 @@ public class menuTest {
 
         assertEquals(priceCheck, true);
     }
+
+    @Test
+    public void getItemTest()
+    {
+        menuTest.addItem(beefBurger);
+        menuTest.addItem(mojito);
+
+        Item desiredItem = menuTest.getItem(beefBurger);
+
+        assertTrue(desiredItem==beefBurger);
+    }
+
+    @Test
+    public void toFileTest() throws FileNotFoundException {
+        menuTest.addItem(beefBurger);
+        menuTest.addItem(mojito);
+        menuTest.addItem(veggieBurger);
+        menuTest.addItem(guiness);
+
+        menuTest.toFile("menuTestFile.txt");
+    }
+
 
 }
