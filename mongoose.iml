@@ -17,6 +17,5 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" exported="" name="javamail-1.4" level="project" />
   </component>
 </module>
