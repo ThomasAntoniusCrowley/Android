@@ -8,7 +8,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.swing.*;
 
-//made by Sean O'Connor
+//made by Sean O'Connor /////
 public class DesktopGUI extends JFrame {
 
     public DesktopGUI() {
