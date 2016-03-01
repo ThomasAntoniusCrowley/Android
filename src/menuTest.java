@@ -10,7 +10,7 @@ import static org.junit.Assert.assertTrue;
  *
  * test for Menu.java class
  */
-public class MenuTest {
+public class menuTest {
 
     private Menu menuTest;
     private Item beefBurger;
