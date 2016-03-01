@@ -23,7 +23,7 @@ public class Server implements Runnable {
         this.ID = i;
     }
 
-    public void ReceiveOrder() {
+    public void ReceiveBill() {
         /**
          * Skeleton code for receiving order details from client app. Will update to plug in client app.
          */
@@ -31,11 +31,12 @@ public class Server implements Runnable {
         try //Receives order information from client
         {
             ObjectInputStream ois = new ObjectInputStream(connection.getInputStream());
-            File file = (File) ois.readObject(); //CHANGE TO ORDER
+            Bill bill = (Bill) ois.readObject(); //CHANGE TO ORDER
             System.out.println("Read order data.");
-            FileOutputStream fos = new FileOutputStream("<Path to orders file>", true);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(file);
+            bill.toString();
+//            FileOutputStream fos = new FileOutputStream("<Path to orders file>", true);
+//            ObjectOutputStream oos = new ObjectOutputStream(fos);
+//            oos.writeObject(file);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -78,8 +79,8 @@ public class Server implements Runnable {
         {
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String request = in.readLine();
-            if (request.equals("SENDING_ORDER")) {
-                ReceiveOrder();
+            if (request.equals("SENDING_BILL")) {
+                ReceiveBill();
             }
         } catch (Exception e) {
             Disconnect();
