@@ -87,8 +87,8 @@ public class DatabaseHandler {
 		 * Returns the id's of all active orders in the database, these id's can then be handed to the returnBill function 
 		 * to get info on the order.
 		 */
-		String countQueryText = "SELECT COUNT( DISTINCT order_id) FROM orders";
-		String listQueryText = "SELECT DISTINCT order_id FROM orders";
+		String countQueryText = "SELECT COUNT( DISTINCT order_id) FROM orders where status = 'open'";
+		String listQueryText = "SELECT DISTINCT order_id FROM orders where status = 'open'";
 		int[] orders = {0};
 		int numberOfOrders = 0;
 		
@@ -138,6 +138,7 @@ public class DatabaseHandler {
 		/**
 		 * Changes an orders status to 'closed'
 		 */
+		String queryText = String.format("UPDATE orders SET status = 'closed' WHERE order_id = %d", id);
 	}
 	
 	public static void getOrderInfo(int id) {
@@ -154,13 +155,15 @@ public class DatabaseHandler {
 		int table_id;
 		String status;
 		try {
-			//Get the number of unique items in the order, and the quantity of each unique item - populate a 2d array with this info.
+			//Get the number of unique items in the order, and the quantity of each unique item
 			Statement statement = database.createStatement();
 			ResultSet results = statement.executeQuery(itemCountQueryText);
 			results.next();
 			uniqueItemCount = results.getInt("COUNT(item_id)");
 			itemArray = new int[uniqueItemCount][2];
 			results = statement.executeQuery(itemCountQueryText);
+			
+			//Read through the results and input them into a 2d array
 			for (int i = 0; results.next(); i++) {
 				itemArray[i][0] = results.getInt("item_id");
 				//test code
