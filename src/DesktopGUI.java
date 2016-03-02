@@ -1,16 +1,16 @@
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Properties;
-import java.util.UUID;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.swing.*;
+import java.awt.*;
+import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Properties;
+import java.util.UUID;
 
 //made by Sean O'Connor /////
 public class DesktopGUI extends JFrame {
-//hjgdasgjhdfjghasdfghjkasdghjfkaghjsdf
     public DesktopGUI() {
 
         initUI();
