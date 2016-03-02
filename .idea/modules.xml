@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../MongooseApp/MongooseApp.iml" filepath="$PROJECT_DIR$/../MongooseApp/MongooseApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/mongoose.iml" filepath="$PROJECT_DIR$/mongoose.iml" />
     </modules>
   </component>
