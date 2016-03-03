@@ -2,7 +2,7 @@
 import java.sql.*;
 
 public class DatabaseHandler {
-//safdsagfdsbafdsbv
+
 	/**
 	 * Class to handle connecting to and querying the database, then returning its results.
 	 * All interaction with the database should go through one instance of this class.
@@ -70,33 +70,127 @@ public class DatabaseHandler {
 			System.out.println("Error reading data from result set");
 			e.printStackTrace();
 		}
+		//Testing code
 		System.out.println("THERE ARE " + returnMenuItemCount() + " ITEMS IN THE MENU");
+		System.out.println("Testing order id retrieval...");
+		int[] ordersResults = listActiveOrders();
+		for (int i = 0; i<ordersResults.length; i++){
+			System.out.println(ordersResults[i]);
+		}
 		System.out.println("THE ITEM WITH ID 5 IS: " + returnItemName(5));
+		getOrderInfo(1);
+		getOrderInfo(2);
 	}
 	
-	public int[] listActiveOrders() {
+	public static int[] listActiveOrders() {
 		/**
 		 * Returns the id's of all active orders in the database, these id's can then be handed to the returnBill function 
 		 * to get info on the order.
 		 */
-		int[] placeholder = {1,2,3};
-		return placeholder;
+		String countQueryText = "SELECT COUNT( DISTINCT order_id) FROM orders where status = 'open'";
+		String listQueryText = "SELECT DISTINCT order_id FROM orders where status = 'open'";
+		int[] orders = {0};
+		int numberOfOrders = 0;
+		
+		try{
+			Statement statement = database.createStatement();
+			ResultSet results = statement.executeQuery(countQueryText);
+			results.next();
+			numberOfOrders = results.getInt("COUNT( DISTINCT order_id)");
+			orders = new int[numberOfOrders];
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			System.out.println( "Error retrieving number of orders");
+			return orders;
+		}
+		
+		try{
+			Statement statement = database.createStatement();
+			ResultSet results = statement.executeQuery(listQueryText);
+			
+			for (int i = 0; results.next(); i++) {
+				orders[i] = results.getInt("order_id");
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			System.out.println( "Error reading results into array");
+			return orders;
+		}
+		return orders;
+	}
+
+	public boolean createOrder() {
+		/**
+		 * Accepts an id for the order_id (an order id relates to an entire groups meal, so if they order 3 mains then later
+		 *  order dessert then the order id won't change) and an array of id's for menu items, then adds these to the orders table
+		 *  in the database, automatically including the time that the order was placed.
+		 *  
+		 *  @returns Boolean, true means the order was placed properly, false means something went wrong.
+		 */
+		
+		return false;
+		
 	}
 	
 	public void closeOrder(int id) {
 		/**
-		 * Removes an order from the database, should be called once a bill is printed for an order.
+		 * Changes an orders status to 'closed'
 		 */
+		String queryText = String.format("UPDATE orders SET status = 'closed' WHERE order_id = %d", id);
 	}
 	
-	public void returnBill(int id) {
+	public static void getOrderInfo(int id) {
 		/**
 		 * Takes an integer id for an order or table, then reads all the relevant order info for that table from
-		 *  the database and formats it into a bill object then returns it.
+		 *  the database and formats it into an order object then returns it.
 		 *  
-		 *  Placeholder function until bill class is finished
+		 *  Placeholder function until order class is finished
 		 */
+		String itemCountQueryText = String.format("SELECT item_id, COUNT(item_id) FROM items WHERE order_id = %d GROUP BY item_id", id);
+		String tableIdQueryText = String.format("SELECT * FROM orders WHERE order_id = %d", id);
+		int uniqueItemCount;
+		int[][] itemArray;
+		int table_id;
+		String status;
+		try {
+			//Get the number of unique items in the order, and the quantity of each unique item
+			Statement statement = database.createStatement();
+			ResultSet results = statement.executeQuery(itemCountQueryText);
+			results.next();
+			uniqueItemCount = results.getInt("COUNT(item_id)");
+			itemArray = new int[uniqueItemCount][2];
+			results = statement.executeQuery(itemCountQueryText);
+			
+			//Read through the results and input them into a 2d array
+			for (int i = 0; results.next(); i++) {
+				itemArray[i][0] = results.getInt("item_id");
+				//test code
+				System.out.println("Item id: " + itemArray[i][0]);
+				//test code
+				itemArray[i][1] = results.getInt("COUNT(item_id)");
+				System.out.println("Item quantity: "+ itemArray[i][1]);
+			}
+			
+			//Get the order's table_id and status (open or closed)
+			statement = database.createStatement();
+			results = statement.executeQuery(tableIdQueryText);
+			results.next();
+			table_id = results.getInt("table_id");
+			status = results.getString("status");
+			//Test code
+			System.out.println("TABLE " + table_id + " STATUS: " + status);
+			
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+		
+		
 	}
+	
 	public static int returnMenuItemCount() {
 		/**
 		 * Returns the number of items in the menu

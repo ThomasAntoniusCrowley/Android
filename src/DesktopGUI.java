@@ -1,12 +1,16 @@
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.swing.*;
 import java.awt.*;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Properties;
 import java.util.UUID;
-import javax.swing.*;
 
-//made by Sean O'Connor
+//made by Sean O'Connor /////
 public class DesktopGUI extends JFrame {
-
     public DesktopGUI() {
 
         initUI();
@@ -29,7 +33,7 @@ public class DesktopGUI extends JFrame {
     JButton getReference = new JButton("Reference Number");
     JButton sendEmailConfirmation = new JButton("Send Email Confirmation");
     JButton bookTable = new JButton("Book Table");
-
+    final JComboBox timePick = new JComboBox();
 
     private void initUI() {
 
@@ -49,7 +53,7 @@ public class DesktopGUI extends JFrame {
 
 
         //timeLabel
-        final JComboBox timePick = new JComboBox();
+
         timePick.addItem("18:00");
         timePick.addItem("18:30");
         timePick.addItem("19:00");
@@ -231,12 +235,6 @@ public class DesktopGUI extends JFrame {
                 timePick.setSelectedIndex(0);
                 lengthTime.setSelectedItem(0);
                 tableNo.setSelectedIndex(0);
-                //size.setValue("1");
-                //tableNo.remove(0);
-                //timePick.remove
-
-
-
             }
         }
         bookTable.addActionListener(new booktable());
@@ -254,7 +252,51 @@ public class DesktopGUI extends JFrame {
 
         class email implements ActionListener {
             public void actionPerformed (ActionEvent a) {
-                //RUNS SEND EMAIL CLASS
+                String to = email.getText();
+                String from = "softwaremongoose@gmail.com";
+                final String username = "softwaremongoose@gmail.com";
+                final String password = "mongoose123";
+
+
+                Properties properties = new Properties();
+                properties.put("mail.smtp.host", "smtp.gmail.com");
+                properties.put("mail.smtp.socketFactory.port", "465");
+                properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+                properties.put("mail.smtp.auth", "true");
+                properties.put("mail.smtp.port", "465");
+
+
+                Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(username, password);
+                    }
+                });
+
+
+                try {
+
+                    MimeMessage message = new MimeMessage(session);
+
+                    message.setFrom(new InternetAddress(from));
+
+                    message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+
+
+                    message.setSubject("Booking Confirmation at Mongoose Restaurant, Reference: "
+                            + referenceNumber.getText());
+
+                    message.setText("Hello " + customer.getText() + "Your table is booked for "
+                            + timePick.getSelectedItem().toString()
+                            + " on: " + dateField.getText()
+                            + ". We look forward to seeing you, reply to this email if you have any queries!");
+
+
+                    Transport.send(message);
+                    System.out.println("Confirmation Sent");
+
+                } catch (MessagingException mex) {
+                    mex.printStackTrace();
+                }
             }
         }
         sendEmailConfirmation.addActionListener(new email());
@@ -302,7 +344,10 @@ public class DesktopGUI extends JFrame {
         JMenu help = new JMenu("Help");
         menubar.add(help);
         JMenuItem about = new JMenuItem("About");
+        JMenuItem manual = new JMenuItem("User Manual");
         help.add(about);
+        help.add(manual);
+
 
         class info implements ActionListener {
             public void actionPerformed (ActionEvent a) {

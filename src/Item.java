@@ -63,7 +63,7 @@ public class Item {
 		categories[7] = "Soft Drink";
 		categories[8] = "Wine";
 		categories[9] = "Cocktail";
-		
+		categories[10] = "Beer";
 		testCategory();
 		testFoodOrDrink();
 		testPrice();
