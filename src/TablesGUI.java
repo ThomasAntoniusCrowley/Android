@@ -10,7 +10,7 @@ public class TablesGUI extends JFrame {
     private JButton[] tableButtons;
 
     private int tableCount = 9;
-    
+
     TablesGUI(String time) {
 
         allTables = new Table[tableCount];
