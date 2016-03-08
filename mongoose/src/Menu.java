@@ -104,7 +104,7 @@ public class Menu
             }
         } else
         {
-            throw new IllegalArgumentException("item not present");
+            throw new IllegalArgumentException("Item not present");
         }
         return desired;
     }
