@@ -6,10 +6,41 @@ public class DatabaseHandler {
 	/**
 	 * Class to handle connecting to and querying the database, then returning its results.
 	 * All interaction with the database should go through one instance of this class.
+	 * 
+	 * Made by Sean McCarthy
 	 */
 	
-	//Declare database connection object here so it's visible for all functions.
+	//Declare database connection object here so its visible for all functions
 	private static Connection database = null;
+
+	public DatabaseHandler() {
+		/**
+		 * Connects to a local database called Restaurant.db then checks if certain tables exist,
+		 * if they don't then it creates them. 
+		 */
+		
+		//Basic variables for connecting to the database
+		String databaseFilePath = "jdbc:mysql://localhost/restaurant";
+		String databaseJDBCDriver = "com.mysql.jdbc.Driver";
+		
+		//Incredibly insecure username and password
+		String mySQLUsername = "root";
+		String mySQLPassword = "password";
+		
+		//Connect to the database on my local machine, displaying messages if it works
+		try {
+			Class.forName(databaseJDBCDriver);
+			database = DriverManager.getConnection(databaseFilePath, mySQLUsername, mySQLPassword);
+			
+			if (database != null) {
+				System.out.println("Successfully connected to database: " + databaseFilePath);
+			}
+		}
+		catch ( Exception e ) {
+			System.out.println("Error connecting to database");
+		      e.printStackTrace();
+		}
+	}
 	
 	//This class won't have a main function in the final version, it's just here for testing
 	public static void main( String[] args) {
@@ -40,46 +71,51 @@ public class DatabaseHandler {
 		      e.printStackTrace();
 		}
 		
-		//Create to execute a statement, storing the output in variable 'result'
-		ResultSet results = null;
-		try {
-			Statement statement = null;
-			System.out.println("Building SQL statement");
-			
-			statement = database.createStatement();
-			String queryText = "SELECT * FROM menu";
-			
-			results = statement.executeQuery(queryText);
-		}
-		catch (Exception e){
-			System.out.println("Error when creating and executing query");
-			e.printStackTrace();
-		}
+//		//Create to execute a statement, storing the output in variable 'result'
+//		ResultSet results = null;
+//		try {
+//			Statement statement = null;
+//			System.out.println("Building SQL statement");
+//			
+//			statement = database.createStatement();
+//			String queryText = "SELECT * FROM menu";
+//			
+//			results = statement.executeQuery(queryText);
+//		}
+//		catch (Exception e){
+//			System.out.println("Error when creating and executing query");
+//			e.printStackTrace();
+//		}
+//		
+//		//Extract usable data from the ResultSet object, just reads everything on the menu for testing purposes.
+//		try {
+//			while (results.next()) {
+//				int id = results.getInt("id");
+//				String category = results.getString("category");
+//				String name = results.getString("name");
+//				int price = results.getInt("price");
+//				System.out.printf("ID: %d, Category: %s, Name: %s, Price: %d \n", id, category, name, price);
+//			}
+//		}
+//		catch (Exception e) {
+//			System.out.println("Error reading data from result set");
+//			e.printStackTrace();
+//		}
+//		//Testing code
+//		System.out.println("THERE ARE " + returnMenuItemCount() + " ITEMS IN THE MENU");
+//		System.out.println("Testing order id retrieval...");
+//		int[] ordersResults = listActiveOrders();
+//		for (int i = 0; i<ordersResults.length; i++){
+//			System.out.println(ordersResults[i]);
+//		}
+//		System.out.println("THE ITEM WITH ID 5 IS: " + returnItemName(5));
+//		getOrderInfo(1);
+//		getOrderInfo(2);
 		
-		//Extract usable data from the ResultSet object, just reads everything on the menu for testing purposes.
-		try {
-			while (results.next()) {
-				int id = results.getInt("id");
-				String category = results.getString("category");
-				String name = results.getString("name");
-				int price = results.getInt("price");
-				System.out.printf("ID: %d, Category: %s, Name: %s, Price: %d \n", id, category, name, price);
-			}
+		int[][] allOrderInfo = getAllOrderInfo();
+		for (int i = 0; i < allOrderInfo.length; i++) {
+			System.out.printf("Order id: %d | Table id: %d | Received: %d | Waiting: %d \n", allOrderInfo[i][0], allOrderInfo[i][1], allOrderInfo[i][2], allOrderInfo[i][3]);
 		}
-		catch (Exception e) {
-			System.out.println("Error reading data from result set");
-			e.printStackTrace();
-		}
-		//Testing code
-		System.out.println("THERE ARE " + returnMenuItemCount() + " ITEMS IN THE MENU");
-		System.out.println("Testing order id retrieval...");
-		int[] ordersResults = listActiveOrders();
-		for (int i = 0; i<ordersResults.length; i++){
-			System.out.println(ordersResults[i]);
-		}
-		System.out.println("THE ITEM WITH ID 5 IS: " + returnItemName(5));
-		getOrderInfo(1);
-		getOrderInfo(2);
 	}
 	
 	public static int[] listActiveOrders() {
@@ -152,8 +188,8 @@ public class DatabaseHandler {
 		String tableIdQueryText = String.format("SELECT * FROM orders WHERE order_id = %d", id);
 		int uniqueItemCount;
 		int[][] itemArray;
-		int table_id;
-		String status;
+		int table_id = -1;
+		String status = "error";
 		try {
 			//Get the number of unique items in the order, and the quantity of each unique item
 			Statement statement = database.createStatement();
@@ -176,9 +212,13 @@ public class DatabaseHandler {
 			//Get the order's table_id and status (open or closed)
 			statement = database.createStatement();
 			results = statement.executeQuery(tableIdQueryText);
-			results.next();
-			table_id = results.getInt("table_id");
-			status = results.getString("status");
+			if (results.next()) {
+				table_id = results.getInt("table_id");
+				status = results.getString("status");
+			}
+			else {
+				System.out.println("Order with associated entries in items table not found in orders table");
+			}
 			//Test code
 			System.out.println("TABLE " + table_id + " STATUS: " + status);
 			
@@ -189,6 +229,58 @@ public class DatabaseHandler {
 		}
 		
 		
+	}
+	
+	public static int[][] getAllOrderInfo() {
+		/**
+		 * returns metadata about all orders (order id, table id, items received & items they are still waiting for)
+		 */
+		
+		try {
+			//First, find out how many orders there are
+			String orderCountStatementText = "SELECT COUNT(order_id) FROM orders WHERE status = 'open'";
+			Statement statement = database.createStatement();
+			ResultSet results = statement.executeQuery(orderCountStatementText);
+			results.next();
+			int orderCount = results.getInt("COUNT(order_id)");
+			
+			//Now, create an array of the appropriate size to return
+			int[][] returnArray = new int[orderCount][4];
+			
+			//Populate the first two columns of the array with order_id and table_id
+			String orderIdTableIdStatementText = "SELECT order_id, table_id FROM orders WHERE status = 'open'";
+			results = statement.executeQuery(orderIdTableIdStatementText);
+			
+			for (int i = 0; results.next(); i++) {
+				returnArray[i][0] = results.getInt("order_id");
+				returnArray[i][1] = results.getInt("table_id");
+			}
+			
+			//Now, get the number of items each order have received / are waiting for from the items table
+			for (int i = 0; i < returnArray.length; i++) {
+				String receivedItemsStatementText = String.format("SELECT COUNT(item_id) FROM items WHERE order_id = %d AND status = 'received'", returnArray[i][0]);
+				results = statement.executeQuery(receivedItemsStatementText);
+				if (results.next()) {
+					returnArray[i][2] = results.getInt("COUNT(item_id)");
+				}
+			}
+			
+			for (int i = 0; i < returnArray.length; i++) {
+				String waitingItemsStatementText = String.format("SELECT COUNT(item_id) FROM items WHERE order_id = %d AND status = 'waiting'", returnArray[i][0]);
+				results = statement.executeQuery(waitingItemsStatementText);
+				if (results.next()) {
+					returnArray[i][3] = results.getInt("COUNT(item_id)");
+				}
+			}
+			
+			//Finally, return the now populated array
+			return returnArray;
+			
+		}
+		catch (Exception e) {
+			System.out.print(e);
+			return new int[1][1];
+		}
 	}
 	
 	public static int returnMenuItemCount() {
