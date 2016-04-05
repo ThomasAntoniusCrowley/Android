@@ -10,8 +10,8 @@ import java.util.Properties;
 import java.util.UUID;
 
 //made by Sean O'Connor /////
-public class DesktopGUI extends JFrame {
-    public DesktopGUI() {
+public class NewBookingPopup extends JFrame {
+    public NewBookingPopup() {
 
         initUI();
     }
@@ -34,6 +34,8 @@ public class DesktopGUI extends JFrame {
     JButton sendEmailConfirmation = new JButton("Send Email Confirmation");
     JButton bookTable = new JButton("Book Table");
     final JComboBox timePick = new JComboBox();
+    final JComboBox tableNo = new JComboBox();
+    JSpinner size = null;
 
     private void initUI() {
 
@@ -49,7 +51,7 @@ public class DesktopGUI extends JFrame {
         int step = 1;
         int init = 0;
         SpinnerNumberModel model = new SpinnerNumberModel(init, min, max, step);
-        final JSpinner size = new JSpinner(model);
+        size = new JSpinner(model);
 
 
         //timeLabel
@@ -77,11 +79,7 @@ public class DesktopGUI extends JFrame {
         lengthTime.addItem("22:00-23:00");
 
 
-
-
-
         //tableNumberLabel
-        final JComboBox tableNo = new JComboBox();
         for (int i = 1; i <= 12; i++) {
             tableNo.addItem(i);
         }
@@ -227,15 +225,22 @@ public class DesktopGUI extends JFrame {
 
         class booktable implements ActionListener {
             public void actionPerformed (ActionEvent a) {
-                customer.setText("");
-                dateField.setText("");
-                phone.setText("");
-                email.setText("");
-                referenceNumber.setText("");
-                timePick.setSelectedIndex(0);
-                lengthTime.setSelectedItem(0);
-                tableNo.setSelectedIndex(0);
+
+                if (createBooking() == 0) {
+                    customer.setText("");
+                    dateField.setText("");
+                    phone.setText("");
+                    email.setText("");
+                    referenceNumber.setText("");
+                    timePick.setSelectedIndex(0);
+                    lengthTime.setSelectedItem(0);
+                    tableNo.setSelectedIndex(0);
+                }
+                else {
+                    System.out.println("error making booking");
+                }
             }
+
         }
         bookTable.addActionListener(new booktable());
 
@@ -321,7 +326,7 @@ public class DesktopGUI extends JFrame {
 
         class neworder implements ActionListener {
             public void actionPerformed (ActionEvent a) {
-                DesktopGUI desk = new DesktopGUI();
+                NewBookingPopup desk = new NewBookingPopup();
                 desk.setVisible(true);
             }
         }
@@ -358,13 +363,42 @@ public class DesktopGUI extends JFrame {
         about.addActionListener(new info());
     }
 
+    private int createBooking() {
+        //reads info from the various fields and commits it to the database, returns 0 if everything went fine, -1 otherwise
+
+        //Read info from each field
+        String nameEntry = customer.getText();
+        String dateEntry = dateField.getText();
+        String timeEntry = timePick.getSelectedItem().toString();
+        String phoneEntry = phone.getText();
+        String emailEntry = email.getText();
+        String sizeEntry = size.getValue().toString();
+        int tableEntry = Integer.parseInt(tableNo.getSelectedItem().toString());
+        String referenceEntry = referenceNumber.getText();
+
+        //Create a statement adding all the info to the bookings table and execute it
+        try {
+            DatabaseHandler dbHandler = new DatabaseHandler();
+            dbHandler.createBooking(nameEntry, dateEntry, timeEntry, phoneEntry, emailEntry, sizeEntry, tableEntry, referenceEntry);
+            return 0;
+        }
+        catch (Exception e) {
+            return -1;
+        }
+    }
+    public static void run() {
+        NewBookingPopup popup = new NewBookingPopup();
+        popup.pack();
+        popup.setVisible(true);
+    }
+
     public static void main(String[] args) {
 
         EventQueue.invokeLater(new Runnable() {
 
             @Override
             public void run() {
-                DesktopGUI ex = new DesktopGUI();
+                NewBookingPopup ex = new NewBookingPopup();
                 ex.pack();
                 ex.setVisible(true);
             }

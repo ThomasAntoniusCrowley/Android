@@ -363,4 +363,123 @@ public class DatabaseHandler {
 		}
 		
 	}
+
+	public int createBooking(String name, String date, String time, String phone, String email, String size, int table, String ref) {
+		/*
+		Accepts a number of strings and enters these into the database as a new booking
+		 */
+		String bookingStatement = String.format("INSERT INTO bookings (customer_name, date, time, phone_number, email, party_size, preferred_table, booking_reference)" +
+				"VALUES ('%s', '%s', '%s', '%s', '%s', '%s', %d, '%s');", name, date, time, phone, email, size, table, ref);
+
+		try {
+			Statement stmt = database.createStatement();
+			stmt.execute(bookingStatement);
+			return 0;
+		}
+		catch (Exception e) {
+			System.out.println(e + "Error adding booking to database");
+			return -1;
+		}
+	}
+
+	public int getBookingCount() {
+		/*
+		returns the number of distinct bookings in the bookings table
+		 */
+		String statementText = "SELECT COUNT(booking_reference) FROM bookings";
+		try {
+			Statement stmt = database.createStatement();
+			ResultSet queryResults = stmt.executeQuery(statementText);
+			queryResults.next();
+			int bookingCount = queryResults.getInt("COUNT(booking_reference)");
+			return bookingCount;
+		}
+		catch (Exception e) {
+			System.out.println(e);
+			System.out.println("Error getting booking count from database, exception thrown and zero returned");
+			return 0;
+		}
+	}
+
+	public String[] getBookingInfo(String reference) {
+		/*
+		Accepts a booking reference and returns all the relevant info for that booking in an array
+		 */
+		String statementText = String.format("SELECT * FROM bookings WHERE booking_reference = %s", reference);
+
+		try {
+			Statement stmt = database.createStatement();
+			ResultSet queryResults = stmt.executeQuery(statementText);
+			queryResults.next();
+
+			String[] returnArray = new String[8];
+			returnArray[0] = queryResults.getString("name");
+			returnArray[1] = queryResults.getString("date");
+			returnArray[2] = queryResults.getString("time");
+			returnArray[3] = queryResults.getString("phone");
+			returnArray[4] = queryResults.getString("email");
+			returnArray[5] = queryResults.getString("party_size");
+			returnArray[6] = String.valueOf(queryResults.getInt("preferred_table"));
+			returnArray[7] = queryResults.getString("booking_reference");
+
+			return returnArray;
+		}
+		catch (Exception e) {
+			System.out.println(e);
+			System.out.println("Error retriving booking info, returned empty array");
+			String[] returnArray = new String[8];
+			return returnArray;
+		}
+	}
+
+	public String[][] getAllBookingInfo(){
+		/*
+		returns info on every booking in the bookings table, formatted into a 2d array
+		 */
+
+		String statementText = "SELECT * FROM bookings";
+		String[][] returnArray = new String[getBookingCount()][8];
+
+		try {
+			Statement stmt = database.createStatement();
+			ResultSet queryResults = stmt.executeQuery(statementText);
+			queryResults.next();
+
+			for (int i = 0; i < getBookingCount(); i++) {
+				returnArray[i][0] = queryResults.getString("customer_name");
+				returnArray[i][1] = queryResults.getString("date");
+				returnArray[i][2] = queryResults.getString("time");
+				returnArray[i][3] = queryResults.getString("phone_number");
+				returnArray[i][4] = queryResults.getString("email");
+				returnArray[i][5] = queryResults.getString("party_size");
+				returnArray[i][6] = String.valueOf(queryResults.getInt("preferred_table"));
+				returnArray[i][7] = queryResults.getString("booking_reference");
+				queryResults.next();
+			}
+			return returnArray;
+		}
+		catch (Exception e) {
+			System.out.println(e);
+			System.out.println("Error getting all booking info");
+
+			return returnArray;
+		}
+
+	}
+
+	public void removeBooking(String reference) {
+		/*
+		Removes the booking with the specified reference
+		 */
+		String statementText = String.format("DELETE FROM bookings WHERE booking_reference = '%s'", reference);
+
+		try {
+			Statement stmt = database.createStatement();
+			stmt.execute(statementText);
+		}
+		catch (Exception e) {
+			System.out.println("Error removing entry from database");
+		}
+	}
+
 }
