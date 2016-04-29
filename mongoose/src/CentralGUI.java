@@ -21,7 +21,6 @@ public class CentralGUI extends JFrame {
 
     private		JTabbedPane tabbedPane;
     private		JPanel		bookingsTab;
-    private		JPanel		tablesTab;
     private 	JPanel		menuTab;
     private 	JLabel 		ipLabel;
     private 	JLabel 		portLabel;
@@ -34,7 +33,7 @@ public class CentralGUI extends JFrame {
 
         //Basic setup
         setTitle("Server GUI");
-        setSize( 800, 500 );
+        setSize( 1000, 600 );
         setBackground( Color.lightGray );
 
         JPanel topPanel = new JPanel();
@@ -43,14 +42,13 @@ public class CentralGUI extends JFrame {
 
         //TEST CODE Create the tabs
         bookingsTab = new JPanel();
-        tablesTab = new JPanel();
         menuTab = new JPanel();
 
         //Create the tabbed pane, and add the tabs to it - code for creating each tab is contained in its own function.
         tabbedPane = new JTabbedPane();
         createOrdersTab();
         createBookingsTab();
-        tabbedPane.addTab( "Tables", tablesTab );
+        createTablesTab();
         tabbedPane.addTab( "Menu", menuTab);
         topPanel.add( tabbedPane, BorderLayout.CENTER );
 
@@ -333,6 +331,13 @@ public class CentralGUI extends JFrame {
             }
         }
         bookingsTabCentralArea.updateUI();
+    }
+
+    public void createTablesTab() {
+
+        TablesGUI tablesTab = new TablesGUI("whatever");
+        tabbedPane.add(tablesTab, "Tables");
+
     }
 
     public static void main(String[] args) {

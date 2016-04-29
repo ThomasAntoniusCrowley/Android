@@ -4,7 +4,7 @@ import java.awt.*;
 /**
  * Created by jordan on 19/02/16.
  */
-public class TablesGUI extends JFrame {
+public class TablesGUI extends JPanel {
 
     private Table[] allTables;
     private JButton[] tableButtons;
@@ -69,12 +69,12 @@ public class TablesGUI extends JFrame {
             this.add(tableButtons[i], constraints);
         }
 
-        this.setPreferredSize(new Dimension(540, 480));
-        this.setMinimumSize(this.getPreferredSize());
-
-        //setSize(320, 400);
-        setTitle("Table Representation");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        this.setPreferredSize(new Dimension(540, 480));
+//        this.setMinimumSize(this.getPreferredSize());
+//
+//        //setSize(320, 400);
+//        setTitle("Table Representation");
+//        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     public void createTables() {
