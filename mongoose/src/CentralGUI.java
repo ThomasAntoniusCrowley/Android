@@ -334,11 +334,29 @@ public class CentralGUI extends JFrame {
     }
 
     public void createTablesTab() {
-
+        /*
+        Adds a tab to the tabbed layout with the table availability visualiser in it
+         */
         TablesGUI tablesTab = new TablesGUI("whatever");
         tabbedPane.add(tablesTab, "Tables");
 
     }
+
+    public void createMenuTab() {
+        /*
+        Creates a menu tab in the tabbed layout, another function fills it with menu item descriptions
+         */
+        return;
+    }
+
+    public void createRevenueTab() {
+        return;
+    }
+
+    public void createSalesTab() {
+        return;
+    }
+
 
     public static void main(String[] args) {
 

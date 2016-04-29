@@ -482,4 +482,39 @@ public class DatabaseHandler {
 		}
 	}
 
+	public int[] getTableStatus() {
+		/*
+		Returns a 9 int array describing the availability status of each table in the restaurant, 1 for in use, 0 for free
+		 */
+
+		String statementText = String.format("SELECT * FROM orders");
+		int[] returnArray = {0,0,0,0,0,0,0,0,0};
+
+		try {
+			Statement stmt = database.createStatement();
+			ResultSet queryResults = stmt.executeQuery(statementText);
+			while (queryResults.next()) {
+				int tableID = queryResults.getInt("table_id");
+				String tableStatus = queryResults.getString("status");
+				if (tableStatus.equals("open")) {
+					if (tableID-1 < 10) {
+						returnArray[tableID-1] = 1;
+					}
+				}
+			}
+			System.out.println(returnArray[0] + returnArray[1] + returnArray[2] + returnArray[3] + returnArray[4] + returnArray[5]);
+			return returnArray;
+		}
+		catch (Exception e) {
+			System.out.println(e);
+			System.out.println("Error getting table availability info");
+
+			return returnArray;
+		}
+
+
+
+
+
+	}
 }

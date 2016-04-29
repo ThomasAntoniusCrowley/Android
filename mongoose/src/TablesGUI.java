@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.xml.crypto.Data;
 import java.awt.*;
 
 /**
@@ -11,10 +12,15 @@ public class TablesGUI extends JPanel {
 
     private int tableCount = 9;
 
+    DatabaseHandler dbHandler = new DatabaseHandler();
+
     TablesGUI(String time) {
 
         allTables = new Table[tableCount];
         createTables();
+
+        //Get table availability
+        int[] tableStatusArray = dbHandler.getTableStatus();
 
         tableButtons = new JButton[tableCount];
         for (int j = 0; j < tableCount; ++j) {
@@ -23,7 +29,7 @@ public class TablesGUI extends JPanel {
 
             //Add Action Listener to each j element
 
-            if (allTables[j].getReserveStatus() == true) {
+            if (tableStatusArray[j] == 1) {
                 tableButtons[j].setBackground(Color.RED);
             }
 
