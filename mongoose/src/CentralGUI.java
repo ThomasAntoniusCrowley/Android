@@ -258,6 +258,13 @@ public class CentralGUI extends JFrame {
                 }
                 removeButton.addActionListener(new removeBookingButtonListener(reference));
 
+                class bookingDetailsButtonListener implements ActionListener {
+                    public void actionPerformed (ActionEvent a) {
+                        displayDetails();
+                    }
+                }
+                detailsButton.addActionListener(new bookingDetailsButtonListener());
+
 
 
                 this.setAlignmentX(LEFT_ALIGNMENT);
@@ -270,6 +277,39 @@ public class CentralGUI extends JFrame {
                 this.add(bookingInfoLabel);
                 this.add(new JPanel());
                 this.add(buttonsPanel);
+            }
+
+            public void displayDetails() {
+                /*
+                Creates a small popup to show further details about the booking
+                 */
+                JFrame detailsFrame = new JFrame();
+                detailsFrame.setTitle("Booking details");
+                detailsFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+                detailsFrame.setMinimumSize(new Dimension(500,500));
+
+                JPanel labelsPanel = new JPanel();
+                labelsPanel.setLayout(new BoxLayout(labelsPanel, BoxLayout.PAGE_AXIS));
+
+                JLabel nameLabel = new JLabel("Name: " + this.name);
+                labelsPanel.add(nameLabel);
+                JLabel dateLabel = new JLabel("Date: "+ this.date);
+                labelsPanel.add(dateLabel);
+                JLabel timeLabel = new JLabel("Time: " + this.time);
+                labelsPanel.add(timeLabel);
+                JLabel phoneLabel = new JLabel("Contact phone: " + this.phone);
+                labelsPanel.add(phoneLabel);
+                JLabel emailLabel = new JLabel("Contact EMail: " + this.email);
+                labelsPanel.add(emailLabel);
+                JLabel partySizeLabel = new JLabel("Party size: " + this.partySize);
+                labelsPanel.add(partySizeLabel);
+                JLabel tableLabel = new JLabel("Preferred table: " + String.valueOf(this.table));
+                labelsPanel.add(tableLabel);
+                JLabel referenceLabel = new JLabel("Booking reference: " + this.reference);
+                labelsPanel.add(referenceLabel);
+
+                detailsFrame.add(labelsPanel);
+                detailsFrame.setVisible(true);
             }
         }
 
