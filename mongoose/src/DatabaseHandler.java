@@ -517,4 +517,60 @@ public class DatabaseHandler {
 
 
 	}
+
+	public String[][] returnMenuAsArray() {
+		/*
+		Returns a result set of all menu items in a given category (starter, drink, etc.)
+		 */
+
+		String queryText = "SELECT * FROM menu;";
+		int itemCount = returnMenuItemCount();
+		String[][] returnArray = new String[itemCount][3];
+
+		try {
+			Statement stmt = database.createStatement();
+			ResultSet resultSet = stmt.executeQuery(queryText);
+
+			int i = 0;
+			while (resultSet.next()) {
+				returnArray[i][0] = resultSet.getString("name");
+				returnArray[i][1] = resultSet.getString("category");
+				int priceInPence = resultSet.getInt("price");
+				String priceString = String.format("£%d.%02d", priceInPence/100, priceInPence%100);
+				returnArray[i][2] = priceString;
+
+				i++;
+			}
+		}
+
+		catch (Exception e) {
+			System.out.println(e);
+			System.out.println("Problem retrieving menu items");
+		}
+
+		return returnArray;
+	}
+
+	public void addMenuItem(String name, String category, int price){
+		/*
+		Adds a menu item from a set of arguments, automatically generating an id number 1 higher than the current highest in the table
+		 */
+		String queryText = "SELECT MAX(id) FROM menu;";
+		int maxID = 0;
+
+		try {
+			Statement stmt = database.createStatement();
+			ResultSet results = stmt.executeQuery(queryText);
+			results.next();
+			maxID = results.getInt("MAX(id)");
+			String statementText = String.format("INSERT INTO menu (name, category, price, id) VALUES ('%s', '%s', %d, %d);", name, category, price, maxID+1);
+			stmt.execute(statementText);
+		}
+		catch (Exception e) {
+			System.out.println("Error calculating max id and inserting values into table: menu");
+			System.out.println(e);
+		}
+	}
+
+
 }

@@ -1,13 +1,9 @@
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.TextArea;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.NumberFormat;
 import javax.swing.*;
+import javax.swing.text.NumberFormatter;
 import javax.xml.crypto.Data;
 
 public class CentralGUI extends JFrame {
@@ -27,7 +23,7 @@ public class CentralGUI extends JFrame {
     private 	JLabel 		connectionsLabel;
     private 	JPanel 		ordersTabScrollableArea;
     private     JPanel      bookingsTabScrollableArea;
-
+    private 	JPanel 		menuTabScrollableArea;
 
     public CentralGUI() {
 
@@ -35,6 +31,7 @@ public class CentralGUI extends JFrame {
         setTitle("Server GUI");
         setSize( 1000, 600 );
         setBackground( Color.lightGray );
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         JPanel topPanel = new JPanel();
         topPanel.setLayout( new BorderLayout() );
@@ -49,7 +46,8 @@ public class CentralGUI extends JFrame {
         createOrdersTab();
         createBookingsTab();
         createTablesTab();
-        tabbedPane.addTab( "Menu", menuTab);
+        createMenuTab();
+        populateMenuTab();
         topPanel.add( tabbedPane, BorderLayout.CENTER );
 
         //Create the connection info box at the top
@@ -346,7 +344,214 @@ public class CentralGUI extends JFrame {
         /*
         Creates a menu tab in the tabbed layout, another function fills it with menu item descriptions
          */
+
+        //Create the scrollable menu tab
+        menuTabScrollableArea = new JPanel(new BorderLayout());
+        final JPanel menuTab = new JPanel(new BorderLayout());
+        menuTab.add(new JScrollPane(menuTabScrollableArea), BorderLayout.CENTER);
+        tabbedPane.add(menuTab, "Menu");
+
+        //Set up the two buttons at the bottom
+        JPanel buttonArea = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton addItemButton = new JButton("Add menu item");
+        JButton refreshButton = new JButton("Refresh");
+        buttonArea.add(addItemButton);
+        buttonArea.add(refreshButton);
+        menuTab.add(buttonArea, BorderLayout.SOUTH);
+
+        //Define the function for adding menu items
+        class AddMenuItemPopup extends JFrame {
+            /*
+            class for the popup through which items are added to the menu
+             */
+
+            JFormattedTextField priceField;
+            JTextField nameField;
+            JComboBox categoryComboBox;
+
+            AddMenuItemPopup() {
+                this.setTitle("Add new menu item");
+                this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+                this.setMinimumSize(new Dimension(300,300));
+
+                JPanel mainPanel = new JPanel();
+                mainPanel.setLayout(new GridLayout(4,1));
+
+                JLabel nameLabel = new JLabel("Name: ");
+                nameField = new JTextField();
+                JPanel namePanel = new JPanel(new GridLayout(2,1));
+                namePanel.add(nameLabel);
+                namePanel.add(nameField);
+
+                JLabel categoryLabel = new JLabel("Category: ");
+                DefaultComboBoxModel categoriesModel = new DefaultComboBoxModel();
+                categoriesModel.addElement("drinks");
+                categoriesModel.addElement("starters");
+                categoriesModel.addElement("mains");
+                categoriesModel.addElement("desserts");
+                categoryComboBox = new JComboBox(categoriesModel);
+                JPanel categoriesPanel = new JPanel(new GridLayout(2,1));
+                categoriesPanel.add(categoryLabel);
+                categoriesPanel.add(categoryComboBox);
+
+                JLabel priceLabel = new JLabel("Price (in pence):");
+                NumberFormat numberFormat = NumberFormat.getIntegerInstance();
+                NumberFormatter formatter = new NumberFormatter(numberFormat);
+                numberFormat.setGroupingUsed(false);
+                formatter.setValueClass(Integer.class);
+                formatter.setMinimum(0);
+                formatter.setCommitsOnValidEdit(true);
+                priceField = new JFormattedTextField(formatter);
+                JPanel pricePanel = new JPanel(new GridLayout(2,1));
+                pricePanel.add(priceLabel);
+                pricePanel.add(priceField);
+
+                JButton okayButton = new JButton("Okay");
+                class okayButtonListener implements ActionListener {
+                    public void actionPerformed (ActionEvent a) {
+                        submitFieldEntries();
+                    }
+                }
+                okayButton.addActionListener(new okayButtonListener());
+                JPanel buttonPanel = new JPanel();
+                buttonPanel.add(okayButton);
+
+                mainPanel.add(namePanel);
+                mainPanel.add(categoriesPanel);
+                mainPanel.add(pricePanel);
+                mainPanel.add(buttonPanel);
+
+                this.add(mainPanel);
+                this.setVisible(true);
+            }
+
+            public void submitFieldEntries() {
+                /*
+                read price, category and name then store them in database
+                 */
+
+                String name = nameField.getText();
+                String category = categoryComboBox.getSelectedItem().toString();
+                String priceString = priceField.getText();
+                int price = 0;
+                if (!priceString.equals("")) {
+                    price = Integer.parseInt(priceString);
+                }
+
+                if (!name.equals("")) {
+                    DatabaseHandler dbHandler = new DatabaseHandler();
+                    dbHandler.addMenuItem(name, category, price);
+                    System.out.printf("Added '%s' to menu. \n", name);
+                    populateMenuTab();
+                    menuTab.updateUI();
+                    this.dispose();
+                }
+                else {
+                    System.out.println("Name field cannot be left empty, try again.");
+                }
+            }
+        }
+
+        //Add button listeners for the buttons
+        class refreshButtonListener implements ActionListener {
+            public void actionPerformed (ActionEvent a) {
+                populateMenuTab();
+                menuTab.updateUI();
+            }
+        }
+        refreshButton.addActionListener(new refreshButtonListener());
+
+        class addItemButtonListener implements ActionListener {
+            public void actionPerformed (ActionEvent a) {
+                new AddMenuItemPopup();
+            }
+        }
+        addItemButton.addActionListener(new addItemButtonListener());
+
+
         return;
+    }
+
+    public void populateMenuTab() {
+        /*
+        Fills the menu tab with menu items and prices, placing them in menuTabScrollableArea that was created by createMenuTab()
+         */
+        DatabaseHandler dbHandler = new DatabaseHandler();
+
+
+        //Firstly, create an area for the menu items to be displayed in
+        JPanel menuTabCentralArea = new JPanel();
+        menuTabCentralArea.setLayout(new BoxLayout(menuTabCentralArea, BoxLayout.PAGE_AXIS));
+        menuTabCentralArea.setAlignmentX(LEFT_ALIGNMENT);
+
+        //Now, get the menu items from the database
+        String[][] menuArray = dbHandler.returnMenuAsArray();
+        int menuCount = menuArray.length;
+
+        //Place menu items and category tags into the central area
+        class CategoryPanel extends JPanel {
+
+            CategoryPanel(String categoryName) {
+                JLabel categoryLabel = new JLabel(categoryName);
+                Font defaultFont = categoryLabel.getFont();
+                Font boldFont = new Font(defaultFont.getFontName(), Font.BOLD, defaultFont.getSize()+12);
+                categoryLabel.setFont(boldFont);
+                this.setLayout(new GridLayout(1,2));
+                this.setMaximumSize(new Dimension(99999, 40));
+                this.add(categoryLabel);
+                this.setAlignmentX(LEFT_ALIGNMENT);
+            }
+        }
+
+        class MenuItemPanel extends JPanel {
+
+            MenuItemPanel(String name, String price) {
+                JLabel nameLabel = new JLabel(name);
+                JLabel priceLabel = new JLabel(price);
+                this.setLayout(new GridLayout(1,3));
+                this.setMaximumSize(new Dimension(99999, 120));
+                this.setMinimumSize(new Dimension(1, 100));
+                this.add(nameLabel);
+                this.add(new JLabel(""));
+                this.add(priceLabel);
+            }
+
+        }
+
+        //Populate each category in turn:
+        menuTabCentralArea.add(new CategoryPanel(" Drinks:"));
+        for (int i = 0; i<menuCount; i++) {
+            if (menuArray[i][1].equals("drinks")) {
+                menuTabCentralArea.add(new MenuItemPanel(menuArray[i][0], menuArray[i][2]));
+            }
+        }
+
+        menuTabCentralArea.add(new CategoryPanel(" Starters:"));
+        for (int i = 0; i<menuCount; i++) {
+            if (menuArray[i][1].equals("starters")) {
+                menuTabCentralArea.add(new MenuItemPanel(menuArray[i][0], menuArray[i][2]));
+            }
+        }
+
+        menuTabCentralArea.add(new CategoryPanel(" Mains:"));
+        for (int i = 0; i<menuCount; i++) {
+            if (menuArray[i][1].equals("mains")) {
+                menuTabCentralArea.add(new MenuItemPanel(menuArray[i][0], menuArray[i][2]));
+            }
+        }
+
+        menuTabCentralArea.add(new CategoryPanel(" Desserts:"));
+        for (int i = 0; i<menuCount; i++) {
+            if (menuArray[i][1].equals("desserts")) {
+                menuTabCentralArea.add(new MenuItemPanel(menuArray[i][0], menuArray[i][2]));
+            }
+        }
+
+        //Now, add the area to the tab
+        menuTabScrollableArea.removeAll();
+        menuTabScrollableArea.add(menuTabCentralArea);
+        menuTab.updateUI();
+
     }
 
     public void createRevenueTab() {
