@@ -68,19 +68,15 @@ public class NewBookingPopup extends JFrame {
 
         //bookingLengthLabel
         final JComboBox lengthTime = new JComboBox();
-        lengthTime.addItem("18:00-19:00");
-        lengthTime.addItem("18:30-19:30");
-        lengthTime.addItem("19:00-20:00");
-        lengthTime.addItem("19:30-20:30");
-        lengthTime.addItem("20:00-21:00");
-        lengthTime.addItem("20:30-21:30");
-        lengthTime.addItem("21:00-22:00");
-        lengthTime.addItem("21:30-22:30");
-        lengthTime.addItem("22:00-23:00");
+        lengthTime.addItem("30");
+        lengthTime.addItem("45");
+        lengthTime.addItem("60");
+        lengthTime.addItem("90");
+        lengthTime.addItem("120");
 
 
         //tableNumberLabel
-        for (int i = 1; i <= 12; i++) {
+        for (int i = 1; i <= 9; i++) {
             tableNo.addItem(i);
         }
 
@@ -269,9 +265,11 @@ public class NewBookingPopup extends JFrame {
                 properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
                 properties.put("mail.smtp.auth", "true");
                 properties.put("mail.smtp.port", "465");
+                properties.put("mail.smtp.connectiontimeout", "5000");
+                properties.put("mail.smtp.timeout", "5000");
 
 
-                Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
+                Session session = Session.getDefaultInstance(properties, new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication(username, password);
                     }
@@ -296,8 +294,9 @@ public class NewBookingPopup extends JFrame {
                             + ". We look forward to seeing you, reply to this email if you have any queries!");
 
 
+                    System.out.println("Sending confirmation email...");
                     Transport.send(message);
-                    System.out.println("Confirmation Sent");
+                    System.out.println("Confirmation Sent.");
 
                 } catch (MessagingException mex) {
                     mex.printStackTrace();

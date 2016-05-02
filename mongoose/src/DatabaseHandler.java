@@ -157,17 +157,40 @@ public class DatabaseHandler {
 		return orders;
 	}
 
-	public boolean createOrder() {
+	public boolean createOrder(int table) {
 		/**
-		 * Accepts an id for the order_id (an order id relates to an entire groups meal, so if they order 3 mains then later
-		 *  order dessert then the order id won't change) and an array of id's for menu items, then adds these to the orders table
-		 *  in the database, automatically including the time that the order was placed.
+		 * Accepts an id for the table_id and creates an order_id associated with it, as well as a time arrived in the database.
+		 * Order id's are persistent so if they order 3 mains then later
+		 *  order dessert the order id won't change)
 		 *  
 		 *  @returns Boolean, true means the order was placed properly, false means something went wrong.
 		 */
-		
-		return false;
-		
+
+		//Firstly, check there isn't an open order still associated with the table in question
+		String queryText = String.format("SELECT COUNT(order_id) FROM orders WHERE table_id='%d' AND status = 'open';", table);
+
+		try {
+			Statement stmt = database.createStatement();
+			ResultSet results = stmt.executeQuery(queryText);
+			results.next();
+			if (results.getInt("COUNT(order_id)") != 0) {
+				return false;
+			}
+			else {
+				String maxIdQuery = "SELECT MAX(order_id) FROM orders;";
+				results = stmt.executeQuery(maxIdQuery);
+				results.next();
+				int maxOrderId = results.getInt("MAX(order_id)");
+				String statementText = String.format("INSERT INTO orders (order_id, table_id, status, arrived) VALUES (%d, %d, 'open', NOW());", maxOrderId+1, table);
+				stmt.execute(statementText);
+				return true;
+			}
+
+		}
+		catch (Exception e) {
+			System.out.println("Error creating new order" + e);
+			return false;
+		}
 	}
 	
 	public void closeOrder(int id) {
@@ -520,7 +543,7 @@ public class DatabaseHandler {
 
 	public String[][] returnMenuAsArray() {
 		/*
-		Returns a result set of all menu items in a given category (starter, drink, etc.)
+		Returns a 2d array of all menu items in the format {name, category, price}
 		 */
 
 		String queryText = "SELECT * FROM menu;";
@@ -546,6 +569,208 @@ public class DatabaseHandler {
 		catch (Exception e) {
 			System.out.println(e);
 			System.out.println("Problem retrieving menu items");
+		}
+
+		return returnArray;
+	}
+
+	public int getOrderDataPeriod() {
+		/*
+		Returns in months, the period for which order data is available
+		 */
+		//First, get all the order data
+		String queryText = "SELECT * FROM orders;";
+		ResultSet results = null;
+		int[] firstDate = {Integer.MAX_VALUE,01};
+		int[] lastDate = {0,01};
+
+		try {
+			Statement stmt = database.createStatement();
+			results = stmt.executeQuery(queryText);
+
+			//Now, find the first and last months in this data
+			while (results.next()) {
+				Timestamp dateTime = results.getTimestamp("arrived");
+				String dateString = dateTime.toString();
+				int[] dateYearMonth = {Integer.parseInt(dateString.split("-",3)[0]), Integer.parseInt(dateString.split("-",3)[1])};
+				if (dateYearMonth[0] < firstDate[0]) {
+					firstDate = dateYearMonth;
+				}
+				if (dateYearMonth[0] == firstDate[0]) {
+					if (dateYearMonth[1] < firstDate[1]) {
+						firstDate = dateYearMonth;
+					}
+				}
+				if (dateYearMonth[0] > lastDate[0]){
+					lastDate = dateYearMonth;
+				}
+				if (dateYearMonth[0] == lastDate[0]) {
+					if (dateYearMonth[1] > lastDate[1]) {
+						lastDate = dateYearMonth;
+					}
+				}
+			}
+		}
+		catch (Exception e) {
+			System.out.println("Error retrieving order data in method getOrderDataPeriod()" + e);
+			return 0;
+		}
+		int monthCount = (12*(lastDate[0]-firstDate[0]) + (lastDate[1]-firstDate[1]) + 1);
+		System.out.printf("%d months in data \n", monthCount);
+
+		if (monthCount > 0) {
+			return monthCount;
+		}
+		else {
+			return 0;
+		}
+
+
+	}
+
+	public int[] getFirstMonthInData() {
+		/*
+		Returns a 2d array of the first month in the database with order data available.
+
+		returns in the format {year, month}
+		 */
+		//First, get all the order data
+		String queryText = "SELECT * FROM orders;";
+		ResultSet results = null;
+		int[] firstDate = {Integer.MAX_VALUE,01};
+
+		try {
+			Statement stmt = database.createStatement();
+			results = stmt.executeQuery(queryText);
+
+			//Now, find the first month in this data
+			while (results.next()) {
+				Timestamp dateTime = results.getTimestamp("arrived");
+				String dateString = dateTime.toString();
+				int[] dateYearMonth = {Integer.parseInt(dateString.split("-",3)[0]), Integer.parseInt(dateString.split("-",3)[1])};
+				if (dateYearMonth[0] < firstDate[0]) {
+					firstDate = dateYearMonth;
+				}
+				if (dateYearMonth[0] == firstDate[0]) {
+					if (dateYearMonth[1] < firstDate[1]) {
+						firstDate = dateYearMonth;
+					}
+				}
+			}
+		}
+		catch (Exception e) {
+			System.out.println("Error retrieving order data in method getFirstMonthInData()" + e);
+			return firstDate;
+		}
+
+		return firstDate;
+	}
+
+	public int[][] getRevenueData() {
+
+		/*
+		-Get all order info
+		-Generate an empty array of year, month, revenue, food, drinks
+		-for each piece of order info, find what month it is and increment the appropriate array entry
+
+		returns in the format {year, month, revenue, food revenue, drinks revenue}
+		 */
+
+
+		//First, get the period for which orders are available
+		int monthCount = getOrderDataPeriod();
+		int[] firstDate = getFirstMonthInData();
+
+		//Set the variables for year and month, knowing the first month and total number of months
+		int[][] revenueArray = new int[monthCount][5];
+		int currentYear = firstDate[0];
+		int currentMonth = firstDate[1];
+		for (int i = 0; i<monthCount; i++) {
+			revenueArray[i][0] = currentYear;
+			revenueArray[i][1] = currentMonth;
+
+			if (currentMonth < 12) {
+				currentMonth++;
+			} else {
+				currentMonth = 1;
+				currentYear++;
+			}
+		}
+
+		//Now, get all the order data
+		String queryText =  "SELECT i.order_id, category, price, arrived " +
+							"FROM items i " +
+							"INNER JOIN menu " +
+							"ON menu.id = i.item_id " +
+							"INNER JOIN orders " +
+							"ON orders.order_id = i.order_id;";
+
+		try {
+			Statement stmt = database.createStatement();
+			ResultSet results = stmt.executeQuery(queryText);
+
+			//Cycle through the results, reading the month and year then adding data to revenue variables
+			while (results.next()) {
+				String category = results.getString("category");
+				int order_id = results.getInt("order_id");
+				int price = results.getInt("price");
+				Timestamp resultDateTime = results.getTimestamp("arrived");
+				String dateString = resultDateTime.toString();
+
+				int[] yearMonth = {Integer.parseInt(dateString.split("-",3)[0]),Integer.parseInt(dateString.split("-",3)[1])};
+
+				//Now, knowing the year and month, as well as the first year and month in the data, place the revenue in the correct variable
+				int monthIndex = ((12*(yearMonth[0]-firstDate[0]))+(yearMonth[1]-firstDate[1]));
+
+				revenueArray[monthIndex][2]+=price;
+				if (category.equals("drinks")) {
+					revenueArray[monthIndex][4]+=price;
+				}
+				else {
+					revenueArray[monthIndex][3] += price;
+				}
+
+			}
+		}
+		catch (Exception e) {
+			System.out.println("error retrieving revenue data" + e);
+		}
+		return revenueArray;
+	}
+
+	public int[] getSalesData(String name) {
+		/*
+		Returns the month by month sales data for a given menu item, starting from the earliest month for which an order exists
+		 */
+
+		//Firstly get the total number of months and the first month
+		int monthCount = getOrderDataPeriod();
+		int[] firstMonth = getFirstMonthInData();
+
+		int[] returnArray = new int[monthCount];
+
+		//Now, get all items that have been ordered
+		String queryText =  "SELECT name, arrived " +
+							"FROM items i " +
+							"INNER JOIN menu ON i.item_id = menu.id " +
+							"INNER JOIN orders ON i.order_id = orders.order_id";
+
+		try {
+			Statement stmt = database.createStatement();
+			ResultSet results = stmt.executeQuery(queryText);
+
+			while (results.next()) {
+				String resultDateTime = results.getTimestamp("arrived").toString();
+				int[] resultYearMonth = {Integer.parseInt(resultDateTime.split("-",3)[0]),Integer.parseInt(resultDateTime.split("-",3)[1])};
+				int monthIndex = (12*(resultYearMonth[0]-firstMonth[0])+(resultYearMonth[1]-firstMonth[1]));
+
+				if (results.getString("name").equals(name)) {
+					returnArray[monthIndex]++;
+				}
+			}
+		}
+		catch (Exception e) {
+			System.out.println(e);
 		}
 
 		return returnArray;

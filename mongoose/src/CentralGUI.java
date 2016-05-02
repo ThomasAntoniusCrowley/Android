@@ -21,6 +21,7 @@ public class CentralGUI extends JFrame {
     private 	JLabel 		ipLabel;
     private 	JLabel 		portLabel;
     private 	JLabel 		connectionsLabel;
+    private     JPanel      ordersTab;
     private 	JPanel 		ordersTabScrollableArea;
     private     JPanel      bookingsTabScrollableArea;
     private 	JPanel 		menuTabScrollableArea;
@@ -48,6 +49,8 @@ public class CentralGUI extends JFrame {
         createTablesTab();
         createMenuTab();
         populateMenuTab();
+        createRevenueTab();
+        createSalesTab();
         topPanel.add( tabbedPane, BorderLayout.CENTER );
 
         //Create the connection info box at the top
@@ -80,7 +83,7 @@ public class CentralGUI extends JFrame {
 
         //Create the scrollable orders tab
         ordersTabScrollableArea = new JPanel(new BorderLayout());
-        JPanel ordersTab = new JPanel(new BorderLayout());
+        ordersTab = new JPanel(new BorderLayout());
         ordersTab.add(new JScrollPane(ordersTabScrollableArea), BorderLayout.CENTER);
         tabbedPane.add(ordersTab, "Orders");
 
@@ -96,9 +99,56 @@ public class CentralGUI extends JFrame {
         class refreshButtonListener implements ActionListener {
             public void actionPerformed (ActionEvent a) {
                 populateOrdersTab();
+                ordersTabScrollableArea.updateUI();
+                ordersTab.updateUI();
+                ordersTab.repaint();
             }
         }
         refreshButton.addActionListener(new refreshButtonListener());
+
+        class addOrderPopup extends JFrame {
+            /*
+            popup for when the add order button is pressed
+             */
+            addOrderPopup() {
+                this.setMinimumSize(new Dimension(300,300));
+                this.setTitle("Create a new order");
+                this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+                JPanel mainPanel = new JPanel();
+                mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
+                JLabel messageLabel = new JLabel("Choose table:");
+                final JComboBox tableComboBox = new JComboBox();
+                for (int i = 1; i<10; i++) {
+                    tableComboBox.addItem(i);
+                }
+                JButton okayButton = new JButton("Create order");
+                class okayButtonListener implements ActionListener {
+                    public void actionPerformed (ActionEvent a) {
+                        DatabaseHandler dbHandler = new DatabaseHandler();
+                        dbHandler.createOrder(Integer.parseInt(tableComboBox.getSelectedItem().toString()));
+                        ordersTabScrollableArea.updateUI();
+                        ordersTab.updateUI();
+                        ordersTab.repaint();
+                    }
+                }
+                okayButton.addActionListener(new okayButtonListener());
+
+                JPanel chooserPanel = new JPanel(new GridLayout(2,1));
+                chooserPanel.add(messageLabel);
+                chooserPanel.add(tableComboBox);
+                mainPanel.add(chooserPanel);
+                mainPanel.add(okayButton);
+                this.add(mainPanel);
+            }
+        }
+
+        class addButtonListener implements ActionListener {
+            public void actionPerformed (ActionEvent a) {
+                JFrame popup = new addOrderPopup();
+                popup.setVisible(true);
+            }
+        }
+        addOrderButton.addActionListener(new addButtonListener());
 
 
         //Populate the orders tab with order info
@@ -157,6 +207,7 @@ public class CentralGUI extends JFrame {
         }
 
         ordersTabScrollableArea.add(ordersTabCentralArea, BorderLayout.CENTER);
+        ordersTab.updateUI();
 
     }
 
@@ -467,9 +518,7 @@ public class CentralGUI extends JFrame {
             }
         }
         addItemButton.addActionListener(new addItemButtonListener());
-
-
-        return;
+        ordersTab.updateUI();
     }
 
     public void populateMenuTab() {
@@ -555,11 +604,52 @@ public class CentralGUI extends JFrame {
     }
 
     public void createRevenueTab() {
-        return;
+
+        JPanel revenueTabScrollableArea = new RevenueTable();
+        JPanel revenueTab = new JPanel(new BorderLayout());
+        revenueTab.add(new JScrollPane(revenueTabScrollableArea), BorderLayout.CENTER);
+        tabbedPane.addTab("Monthly Revenue", revenueTab);
     }
 
     public void createSalesTab() {
-        return;
+
+        //Create the scrollable area for the tab
+        final JPanel salesTab = new JPanel(new BorderLayout());
+        JPanel salesTabScrollableArea = new JPanel();
+        salesTab.add(new JScrollPane(salesTabScrollableArea), BorderLayout.CENTER);
+        tabbedPane.addTab("Sales", salesTab);
+
+        //Create a JLabel to sit at the top
+        final JLabel salesMessageLabel = new JLabel("Choose a menu item to view sales data");
+        salesTab.add(salesMessageLabel, BorderLayout.NORTH);
+
+        //Create the combo box and button that sit at the bottom
+        DatabaseHandler dbHandler = new DatabaseHandler();
+        final JComboBox menuItemComboBox = new JComboBox();
+        String[][] menuArray = dbHandler.returnMenuAsArray();
+        for (int i=0; i< menuArray.length; i++) {
+            menuItemComboBox.addItem(menuArray[i][0]);
+        }
+        JButton displayButton = new JButton("Display data");
+
+        JPanel comboButtonPanel = new JPanel();
+        comboButtonPanel.add(menuItemComboBox);
+        comboButtonPanel.add(displayButton);
+        salesTab.add(comboButtonPanel, BorderLayout.SOUTH);
+
+
+        class displayButtonListener implements ActionListener {
+            /*
+            button listener for the display sales data button
+             */
+            public void actionPerformed (ActionEvent a) {
+                String comboSelection = menuItemComboBox.getSelectedItem().toString();
+                salesTab.add(new SalesTable(comboSelection), BorderLayout.CENTER);
+                salesMessageLabel.setText(String.format("Sales data for: %s", comboSelection));
+
+            }
+        }
+        displayButton.addActionListener(new displayButtonListener());
     }
 
 
