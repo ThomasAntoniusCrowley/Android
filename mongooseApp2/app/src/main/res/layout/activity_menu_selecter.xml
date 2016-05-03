@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true" android:layout_alignParentStart="true"
+        xmlns:android="http://schemas.android.com/apk/res/android" >
+
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Menu"
+            android:id="@+id/menu_title"
+            android:layout_alignParentTop="true" android:layout_centerHorizontal="true" android:layout_weight="0.45"
+            android:layout_gravity="center_horizontal"/>
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:text="Drinks"
+            android:id="@+id/drink_button" android:layout_below="@+id/menu_title" android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" android:layout_weight="1"/>
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:text="Starters"
+            android:id="@+id/starter_button"
+            android:layout_below="@+id/drink_button" android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" android:layout_alignRight="@+id/drink_button"
+            android:layout_alignEnd="@+id/drink_button" android:layout_weight="1"/>
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:text="Mains"
+            android:id="@+id/main-button" android:layout_below="@+id/starter_button"
+            android:layout_alignLeft="@+id/starter_button" android:layout_alignStart="@+id/starter_button"
+            android:layout_alignRight="@+id/starter_button" android:layout_alignEnd="@+id/starter_button"
+            android:layout_weight="1"/>
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:text="Desert"
+            android:id="@+id/desert_button" android:layout_below="@+id/main-button"
+            android:layout_alignRight="@+id/starter_button" android:layout_alignEnd="@+id/starter_button"
+            android:layout_alignParentLeft="true" android:layout_alignParentStart="true" android:layout_weight="1"/>
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:text="current order"
+            android:id="@+id/order_button" android:layout_below="@+id/desert_button"
+            android:layout_alignRight="@+id/desert_button" android:layout_alignEnd="@+id/desert_button"
+            android:layout_alignParentLeft="true" android:layout_alignParentStart="true" android:layout_weight="1"/>
+    <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:text="Back to tables"
+            android:id="@+id/back"
+            android:layout_below="@+id/order_button" android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" android:layout_weight="1"/>
+
+</LinearLayout>
