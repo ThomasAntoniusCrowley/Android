@@ -18,19 +18,14 @@ public class DatabaseHandler {
 		 * Connects to a local database called Restaurant.db then checks if certain tables exist,
 		 * if they don't then it creates them. 
 		 */
-		try {
-			//Basic variables for connecting to the database
-			String databaseFilePath = "jdbc:mysql://localhost/restaurant";
-			String databaseJDBCDriver = "com.mysql.jdbc.Driver";
+		//Basic variables for connecting to the database
+		String databaseFilePath = "jdbc:mysql://localhost/restaurant";
+		String databaseJDBCDriver = "com.mysql.jdbc.Driver";
 
-			//Incredibly insecure username and password
-			String mySQLUsername = "root";
-			String mySQLPassword = "password";
-		}
-		catch (Exception e) {
-			System.out.println("Error connecting to mySQL server");
-			e.printStackTrace();
-		}
+		//Incredibly insecure username and password
+		String mySQLUsername = "root";
+		String mySQLPassword = "password";
+
 		//Connect to the database on my local machine, displaying messages if it works
 		try {
 			Class.forName(databaseJDBCDriver);
@@ -41,8 +36,7 @@ public class DatabaseHandler {
 			}
 		}
 		catch ( Exception e ) {
-			System.out.println("Error connecting to database");
-		      e.printStackTrace();
+			System.out.println("Error connecting to database, dummy functions still available.");
 		}
 	}
 	
