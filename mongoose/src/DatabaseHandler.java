@@ -18,15 +18,19 @@ public class DatabaseHandler {
 		 * Connects to a local database called Restaurant.db then checks if certain tables exist,
 		 * if they don't then it creates them. 
 		 */
-		
-		//Basic variables for connecting to the database
-		String databaseFilePath = "jdbc:mysql://localhost/restaurant";
-		String databaseJDBCDriver = "com.mysql.jdbc.Driver";
-		
-		//Incredibly insecure username and password
-		String mySQLUsername = "root";
-		String mySQLPassword = "password";
-		
+		try {
+			//Basic variables for connecting to the database
+			String databaseFilePath = "jdbc:mysql://localhost/restaurant";
+			String databaseJDBCDriver = "com.mysql.jdbc.Driver";
+
+			//Incredibly insecure username and password
+			String mySQLUsername = "root";
+			String mySQLPassword = "password";
+		}
+		catch (Exception e) {
+			System.out.println("Error connecting to mySQL server");
+			e.printStackTrace();
+		}
 		//Connect to the database on my local machine, displaying messages if it works
 		try {
 			Class.forName(databaseJDBCDriver);
@@ -600,6 +604,7 @@ public class DatabaseHandler {
 
 		return returnArray;
 	}
+
 	public String[][] returnDummyMenu() {
 		/*
 		Returns a dummy version of the menu which doesn't rely on having mySQL and the database available
@@ -652,7 +657,6 @@ public class DatabaseHandler {
 			return 0;
 		}
 		int monthCount = (12*(lastDate[0]-firstDate[0]) + (lastDate[1]-firstDate[1]) + 1);
-		System.out.printf("%d months in data \n", monthCount);
 
 		if (monthCount > 0) {
 			return monthCount;
