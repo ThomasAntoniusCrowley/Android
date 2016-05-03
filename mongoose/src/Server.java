@@ -16,6 +16,7 @@ public class Server implements Runnable {
     private Socket connection;
     private int ID;
     private static int clientCount;
+    private DatabaseHandler db;
     public static final int MAXCLIENTS = 10;
 
     public Server(Socket connection, int i) {
@@ -31,30 +32,64 @@ public class Server implements Runnable {
 
         try //Receives order information from client
         {
-            ObjectInputStream ois = new ObjectInputStream(connection.getInputStream());
-            Bill bill = (Bill) ois.readObject(); //CHANGE TO ORDER
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            int table = in.read();
+            int size = in.read();
+
+            System.out.println("Order size: " + size);
+
+            String[] items = new String[size];
+            for (int i = 0; i < size; i++)
+            {
+                items[i] = in.readLine();
+            }
+
             System.out.println("Read order data.");
-            bill.toString();
-//            FileOutputStream fos = new FileOutputStream("<Path to orders file>", true);
-//            ObjectOutputStream oos = new ObjectOutputStream(fos);
-//            oos.writeObject(file);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-//    CODE DEPRECATED
-//    public void SendToClient()
+    public void AddToOrder()
+    {
+
+    }
+    public void ReceiveTest()
+    {
+        try //Receives order information from client
+        {
+            System.out.println("TESTING");
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            int size = in.read();
+
+            System.out.println(size);
+
+            String[] items = new String[size];
+            for (int i = 0; i < size; i++)
+            {
+                items[i] = in.readLine();
+                System.out.println(items[i]);
+            }
+
+            System.out.println("Read order data.");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+//    public void ConfirmTest()
 //    {
-//        try //Handles request and sends appropriate data
+//        try
 //        {
+//            PrintWriter out = new PrintWriter(connection.getOutputStream(), true);
+//            out.println("SENDING_BILL");
+//        } catch(Exception e) {
 //
 //        }
-//        catch (Exception e)
-//        {
-//            e.printStackTrace();
-//        }
 //    }
+
 
     public void Disconnect() {
         /**
@@ -83,6 +118,9 @@ public class Server implements Runnable {
             if (request.equals("SENDING_BILL")) {
                 ReceiveBill();
             }
+            if (request.equals("SENDING_TEST")) {
+                ReceiveTest();
+            }
         } catch (Exception e) {
             Disconnect();
             Thread.currentThread().stop();
@@ -94,17 +132,37 @@ public class Server implements Runnable {
          * Runs whenever client connects and sends them most recent menu.
          */
 
-        Menu menu = new Menu();
-        //POPULATE MENU HERE
+        db = new DatabaseHandler();
+        String[][] menu = db.returnDummyMenu();
+        System.out.println(menu[0][0]);
+        try {
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
 
-        try //Sends menu file as object to client
+            out.write(menu.length);
+            out.write(menu[0].length);
+
+            for (int i = 0; i < menu.length; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    out.write(menu[i][j] + "\n");
+                }
+            }
+            out.flush();
+            out.close();
+        } catch (Exception e)
         {
-            ObjectOutputStream outList = new ObjectOutputStream(connection.getOutputStream());
-            outList.writeObject(menu);
-            outList.flush();
-        } catch (Exception e) {
             e.printStackTrace();
         }
+
+//        try //Sends menu file as object to client
+//        {
+//            ObjectOutputStream outList = new ObjectOutputStream(connection.getOutputStream());
+//            outList.writeObject(menu);
+//            outList.flush();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
 //    POTENTIALLY USEFUL CODE
@@ -138,13 +196,16 @@ public class Server implements Runnable {
         try //Create server socket on specified port
         {
             ServerSocket socket = new ServerSocket(port);
+            System.out.println("Server ready.");
             while (clientCount <= MAXCLIENTS) //Create loop to instantiate threads for new clients
             {
                 Socket connection = socket.accept();
                 System.out.println("Client accepted.");
+
                 Runnable runnable = new Server(connection, ++clientCount);
                 executor.execute(runnable);
                 System.out.println("Thread started.");
+
             }
             System.out.println("Client limit reached.");
         } catch (Exception e) {
