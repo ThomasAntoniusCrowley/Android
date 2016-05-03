@@ -199,11 +199,37 @@ public class DatabaseHandler {
 		 */
 		String queryText = String.format("UPDATE orders SET status = 'closed' WHERE order_id = %d", id);
 	}
+
+	public String[] getOrderMetadata(int id) {
+		/*
+		Takes an id and returns time arrived and associated table for that order.
+		Does not return the items ordered by that order, use getOrderInfo( ) for that.
+
+		returns in the format {"table_id", "arrived"};
+		 */
+
+		String[] returnArray = {"",""};
+		try {
+			String queryText = String.format("SELECT * FROM orders WHERE order_id = %d;", id);
+			Statement stmt = database.createStatement();
+			ResultSet results = stmt.executeQuery(queryText);
+			results.next();
+			String table = String.valueOf(results.getInt("table_id"));
+			String arrived = results.getTimestamp("arrived").toString();
+			returnArray[0] = table;
+			returnArray[1] = arrived;
+		}
+		catch (Exception e) {
+			System.out.println("Error getting order metadata.");
+			e.printStackTrace();
+		}
+		return returnArray;
+	}
 	
-	public static void getOrderInfo(int id) {
+	public String[] getOrderInfo(int id) {
 		/**
 		 * Takes an integer id for an order or table, then reads all the relevant order info for that table from
-		 *  the database and formats it into an order object then returns it.
+		 *  the database and formats it into a string array then returns it.
 		 *  
 		 *  Placeholder function until order class is finished
 		 */
@@ -248,10 +274,11 @@ public class DatabaseHandler {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-			return;
+			return new String[] {"",""};
 		}
 		
-		
+		//TEST CODE REMOVE
+		return new String[] {"",""};
 	}
 	
 	public static int[][] getAllOrderInfo() {
@@ -572,6 +599,15 @@ public class DatabaseHandler {
 		}
 
 		return returnArray;
+	}
+	public String[][] returnDummyMenu() {
+		/*
+		Returns a dummy version of the menu which doesn't rely on having mySQL and the database available
+		 */
+
+		String[][] returnArray = {{"Small soft drink", "drinks", "£1.99"}, {"Onion rings", "starters", "£2.00"}, {"Steak and chips", "mains", "£11.00"}, {"Ice cream", "desserts", "£3.00"}};
+		return returnArray;
+
 	}
 
 	public int getOrderDataPeriod() {
