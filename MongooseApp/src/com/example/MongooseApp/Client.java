@@ -5,16 +5,21 @@ import android.app.ActionBar;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by joshua on 18/02/16.
  */
 public class Client
 {
+//    public String[][] menu;
     private static String host;
     private static int port;
     private static InetAddress inet;
     private static Socket serverSocket;
-    private com.example.MongooseApp.Menu menu;
 
     public Client(String host, int port)
     {
@@ -35,6 +40,13 @@ public class Client
         System.out.println("Connection established.");
     }
 
+    public void InitConnection()
+    {
+        String host = "localhost";
+        int port = 19999;
+        Client connection = new Client(host, port);
+    }
+
     public void Disconnect()
     {
         try //Disconnect from server
@@ -51,10 +63,9 @@ public class Client
     /**
      * Runs on connect to server and pulls most recent menu as 2D array.
      */
-    public static void ReceiveMenu() //UNDER CONSTRUCTION
-    {
+    public String[][] ReceiveMenu() {
+        String[][] menu;
         try {
-            String[][] menu;
             BufferedReader in = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
 
             int int1 = in.read(); //Get array dimensions
@@ -62,17 +73,53 @@ public class Client
 
             menu = new String[int1][int2];
 
-            for (int i = 0; i < menu.length; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
+            for (int i = 0; i < menu.length; i++) {
+                for (int j = 0; j < 3; j++) {
                     menu[i][j] = in.readLine(); //Read in menu contents
+
                 }
             }
-        } catch (Exception e)
-        {
+            return menu;
+        } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
+    }
+
+
+    public String[][] SortedMenu(String[][] menu)
+    {
+        final Map<String, Integer> dict = new HashMap<String, Integer>();
+        dict.put("starters", 0);
+        dict.put("mains", 1);
+        dict.put("desserts", 2);
+        dict.put("drinks", 3);
+
+        for (int i = 0; i < menu.length - 1; i++)
+        {
+            int course1 = dict.get(menu[i][1]);
+            int course2 = dict.get(menu[i + 1][1]);
+
+            if (course1 > course2)
+            {
+                String tmpRow[] = menu[i];
+                menu[i] = menu[i + 1];
+                menu[i + 1] = tmpRow;
+            }
+        }
+//        Arrays.sort(menu, new Comparator<String[]>() {
+//            @Override
+//            public int compare(String[] item1, String[] item2) {
+//                int course1 = dict.get(item1[1]);
+//                int course2 = dict.get(item2[1]);
+//                return course1.compareTo(course2);
+//            }
+//        });
+
+        for (String[] s : menu) {
+            System.out.println(s[0] + " " + s[1] + " " + s[2]);
+        }
+        return menu;
     }
 
     /**
@@ -83,7 +130,7 @@ public class Client
      */
     public void SendBill(String[] items, int tableNo) //UNDER CONSTRUCTION
     {
-
+        InitConnection();
         try //Informs server of incoming data and sends byte array containing image
         {
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(serverSocket.getOutputStream()));
@@ -110,11 +157,6 @@ public class Client
 
     public static void main(String[] args)
     {
-        String host = "localhost";
-        int port = 19999;
-        Client connection = new Client(host, port);
-        ReceiveMenu();
-
 //        JFrame ui = new ClientUI(connection, fileList);
 //        ui.setVisible(true);
     }

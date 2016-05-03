@@ -13,5 +13,9 @@ public class OrderActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+        Client client = new Client("localhost", 19999);
+        client.SendBill();
+        client.ReceiveMenu();
     }
 }
