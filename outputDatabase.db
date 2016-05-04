@@ -1,0 +1,155 @@
+-- MySQL dump 10.13  Distrib 5.7.11, for Win64 (x86_64)
+--
+-- Host: localhost    Database: restaurant
+-- ------------------------------------------------------
+-- Server version	5.7.11-log
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `bookings`
+--
+
+DROP TABLE IF EXISTS `bookings`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `bookings` (
+  `customer_name` varchar(100) NOT NULL,
+  `date` varchar(100) NOT NULL,
+  `time` varchar(100) NOT NULL,
+  `phone_number` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `party_size` varchar(100) NOT NULL,
+  `preferred_table` int(11) NOT NULL,
+  `booking_reference` varchar(100) NOT NULL,
+  PRIMARY KEY (`booking_reference`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `bookings`
+--
+
+LOCK TABLES `bookings` WRITE;
+/*!40000 ALTER TABLE `bookings` DISABLE KEYS */;
+INSERT INTO `bookings` VALUES ('dss','hjnhj','19:30','hjhj','seanmcc@outlook.com','3',1,'0e1e3a2a-b502-4b24-b864-15fc68c9d401'),('HBSJB','HJDCBAHJ','18:00','BHJBH','HJBHJ','6',1,'6692326c-2ce9-42c1-89d3-6de8ec5e464d'),('adhdba','vghsah','18:00','vhjvxa','vjvghsq','0',1,'bjdsuyds'),('sean','wednesday','18:00','0209','seanfdass','5',1,'e645e79d-72b3-46ff-a9aa-dcc397bbab93'),('rstdxf','c','18:00','cg','cvdfdf','0',1,'fgxfgxgf');
+/*!40000 ALTER TABLE `bookings` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `items`
+--
+
+DROP TABLE IF EXISTS `items`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `items` (
+  `order_id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `status` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `items`
+--
+
+LOCK TABLES `items` WRITE;
+/*!40000 ALTER TABLE `items` DISABLE KEYS */;
+INSERT INTO `items` VALUES (1,2,'received'),(1,1,'received'),(2,1,'received'),(1,4,'received'),(1,6,'received'),(3,7,'received'),(2,8,'waiting'),(2,9,'waiting'),(7,7,'waiting'),(9,1,'waiting'),(9,1,'waiting'),(9,1,'waiting'),(9,1,'waiting'),(6,10,'waiting'),(6,10,'waiting'),(1,1,'waiting'),(1,2,'waiting'),(1,3,'waiting'),(1,5,'waiting'),(1,6,'waiting'),(1,7,'received'),(1,8,'received'),(1,10,'received'),(1,11,'received'),(1,12,'waiting'),(4,7,'received'),(4,3,'received'),(0,4,'waiting'),(0,4,'waiting'),(0,4,'waiting'),(0,4,'waiting'),(0,4,'waiting'),(0,4,'waiting'),(0,4,'waiting'),(0,4,'waiting'),(0,4,'waiting'),(0,4,'waiting'),(0,8,'waiting'),(0,8,'waiting'),(0,8,'waiting'),(0,8,'waiting'),(0,8,'waiting'),(0,8,'waiting'),(0,3,'waiting'),(0,3,'waiting'),(0,3,'waiting'),(0,3,'waiting'),(0,3,'waiting'),(0,7,'waiting'),(0,7,'waiting'),(0,7,'waiting'),(0,7,'waiting'),(0,7,'waiting'),(0,7,'waiting'),(0,7,'waiting'),(0,5,'waiting'),(0,5,'waiting'),(0,5,'waiting'),(0,5,'waiting'),(0,1,'waiting'),(0,1,'waiting'),(0,1,'waiting'),(0,1,'waiting'),(0,1,'waiting'),(7,6,'waiting'),(7,6,'waiting'),(7,6,'waiting'),(8,6,'waiting'),(8,6,'waiting'),(8,6,'waiting'),(8,6,'waiting');
+/*!40000 ALTER TABLE `items` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `menu`
+--
+
+DROP TABLE IF EXISTS `menu`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `menu` (
+  `id` int(11) NOT NULL,
+  `category` varchar(255) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `price` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `menu`
+--
+
+LOCK TABLES `menu` WRITE;
+/*!40000 ALTER TABLE `menu` DISABLE KEYS */;
+INSERT INTO `menu` VALUES (1,'drinks','Small soft drink',199),(2,'drinks','Large soft drink',250),(3,'drinks','Wine',400),(4,'drinks','Beer',350),(5,'starters','Bread',250),(6,'starters','Salad',400),(7,'starters','Onion rings',350),(8,'starters','Olives',250),(9,'mains','Hamburger',850),(10,'mains','Steak and chips',1100),(11,'desserts','Ice cream',450),(12,'desserts','Apple pie',350),(13,'starters','Chicken wings',450),(14,'mains','Pizza',1399),(15,'drinks','Coffee',250),(16,'mains','Pork loin',780),(17,'desserts','Chocolate cake',350),(18,'desserts','Cheesecake',450),(19,'drinks','Water',150),(21,'drinks','Milk',150),(22,'mains','Lamb korma',675),(23,'starters','Calamari',450),(24,'drinks','Ice tea',250);
+/*!40000 ALTER TABLE `menu` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `orders`
+--
+
+DROP TABLE IF EXISTS `orders`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `orders` (
+  `order_id` int(11) NOT NULL,
+  `table_id` int(11) NOT NULL,
+  `status` enum('open','closed') DEFAULT NULL,
+  `arrived` datetime DEFAULT NULL,
+  PRIMARY KEY (`order_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `orders`
+--
+
+LOCK TABLES `orders` WRITE;
+/*!40000 ALTER TABLE `orders` DISABLE KEYS */;
+INSERT INTO `orders` VALUES (1,1,'closed','2016-03-07 15:35:05'),(2,3,'closed','2016-05-03 12:52:42'),(3,2,'closed','2016-05-03 13:23:37'),(4,4,'open','2016-05-03 13:25:00'),(5,9,'open','2016-05-04 12:13:10'),(6,1,'open','2016-05-04 22:44:57'),(7,5,'open','2016-05-04 23:00:15'),(8,7,'open','2016-05-04 23:21:35');
+/*!40000 ALTER TABLE `orders` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `tables`
+--
+
+DROP TABLE IF EXISTS `tables`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tables` (
+  `table_id` int(11) NOT NULL,
+  `seats` int(11) NOT NULL,
+  PRIMARY KEY (`table_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tables`
+--
+
+LOCK TABLES `tables` WRITE;
+/*!40000 ALTER TABLE `tables` DISABLE KEYS */;
+/*!40000 ALTER TABLE `tables` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2016-05-04 23:40:21

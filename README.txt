@@ -9,6 +9,10 @@ in the wiki. We chose not to embed this database so that multiple instances of t
 server side class can all connect to a single database, without fear of falling out
 of sync. Early versions which used SQLite would not have been able to do this.
 
+To use our software with this database, load the included outputDatabase.db database
+into mySQL as "restaurant", our code also assumes that the user will use the default
+mySQL logins, but these can be changed if needed.
+
 There is an associated client application which runs on android. It's through this 
 app that the waiters use to order food items to the various tables, the centralGUI 
 then handles payment and billing for these along with the other functionality asked
