@@ -1,7 +1,10 @@
+import javax.swing.*;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 /**
  * Created by jordan.
@@ -11,13 +14,19 @@ import java.util.ArrayList;
 public class Bill {
 
     private Item[] bill;
+    private String orderId;
+    private String arrivedTime;
+    private String tableNo;
 
 
     //private Item currentItem;
 
     //Creates a bill object, which is a list of billSize Item objects
-    public Bill(int billSize) {
+    public Bill(int billSize, String orderId, String tableNo, String arrivedTime) {
         bill = new Item[billSize];
+        this.orderId=orderId;
+        this.tableNo = tableNo;
+        this.arrivedTime = arrivedTime;
 
     }
 
@@ -39,13 +48,13 @@ public class Bill {
         }
     }
 
-    public double getTotal()
+    public int getTotal()
     {
-        double total = 0;
+        int total = 0;
 
         for (Item i : bill)
         {
-           double price =  i.getThisPrice();
+           int price =  i.getThisPrice();
 
             total = total + price;
         }
@@ -55,11 +64,10 @@ public class Bill {
     }
 
     //Adds VAT to get a final price (to the penny)
-    public double addVAT()
+    public int addVAT()
     {
-        double finalPrice;
-        finalPrice = (getTotal() * 1.2);
-        finalPrice = Math.round(finalPrice * 100.0) / 100.0;
+        int finalPrice;
+        finalPrice = (getTotal() + getTotal()/5);
 
         return finalPrice;
 
@@ -112,22 +120,29 @@ public class Bill {
      */
     {
         ArrayList<String> billArray = new ArrayList<String>();
-
+        billArray.add(String.format("Order ID: %s",orderId));
+        billArray.add(String.format("Table: %s", tableNo));
+        billArray.add(String.format("Time arrived: %s", arrivedTime));
+        billArray.add("");
 
         for (Item i : bill)
         {
             String name = i.getThisName();
-            double price = i.getThisPrice();
-            String priceString = String.valueOf(price);
-            String billString = name + " ........... " + priceString;
-
+            int price = i.getThisPrice();
+            String priceString = String.format("£%d.%02d",price/100, price%100);
+            //Set the string to always be the right length
+            String billString = name;
+            for (int j = 0;j <30-name.length();j++){
+            billString += ".";
+            }
+            billString += priceString;
             billArray.add(billString);
 
         }
-        String priceBeforeVat = String.valueOf(getTotal());
-        String preVatString = "Total .......... " + priceBeforeVat;
-        String finalPriceString = String.valueOf(addVAT());
-        finalPriceString = "Total (inc Vat) ............ " + finalPriceString;
+        String priceBeforeVat = String.format("£%d.%02d", getTotal()/100, getTotal()%100);
+        String preVatString = "Total ...................... " + priceBeforeVat;
+        String finalPriceString = String.format("£%d.%02d", addVAT()/100, addVAT()%100);
+        finalPriceString =    "Total (inc Vat) ............ " + finalPriceString;
         billArray.add("");
         billArray.add(preVatString);
         billArray.add(finalPriceString);
@@ -139,6 +154,22 @@ public class Bill {
             pw.println(s);
         }
         pw.close();
+
+        File billTextFile = new File(file_name);
+        JTextPane paperPane = new JTextPane();
+        paperPane.setContentType("text/html");
+        String printContent = "";
+        for (String i : billArray) {
+            printContent += i+"\n";
+        }
+        paperPane.setText(printContent);
+        try {
+            paperPane.print();
+        }
+        catch (Exception e) {
+            System.out.println("Error printing physical bill");
+        }
+
     }
 }
 

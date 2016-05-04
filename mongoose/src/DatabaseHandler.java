@@ -190,12 +190,35 @@ public class DatabaseHandler {
 			return false;
 		}
 	}
+
+	public void addItemsToOrder(String[] items, int orderId) {
+		/*
+		Accepts an array of strings, each being an item name, and adds each one to items associated with a given orderId
+		 */
+		for (String item: items) {
+			String statementText = String.format("INSERT INTO items (item_id, order_id, status) VALUES (%d, %d, 'waiting')", getIdFromName(item), orderId);
+			try {
+				Statement stmt = database.createStatement();
+				stmt.execute(statementText);
+			}
+			catch (Exception e) {
+				System.out.printf("Error inserting name : '%s' into table: 'items'");
+			}
+		}
+	}
 	
 	public void closeOrder(int id) {
 		/**
 		 * Changes an orders status to 'closed'
 		 */
 		String queryText = String.format("UPDATE orders SET status = 'closed' WHERE order_id = %d", id);
+		try {
+			Statement stmt = database.createStatement();
+			stmt.execute(queryText);
+		}
+		catch (Exception e) {
+			System.out.println("Error closing order id: " + id);
+		}
 	}
 
 	public String[] getOrderMetadata(int id) {
@@ -357,6 +380,24 @@ public class DatabaseHandler {
 		return id;
 	}
 
+	public String getNameFromId(int id) {
+		/*
+		Gets an items name from its item id
+		 */
+		String name = "";
+		String queryText = String.format("GET * FROM menu WHERE id = %d", id);
+		try {
+			Statement stmt = database.createStatement();
+			ResultSet results = stmt.executeQuery(queryText);
+			results.next();
+			name = results.getString("name");
+		}
+		catch (Exception e) {
+			System.out.println("Error getting name from ");
+		}
+		return name;
+	}
+
 	public void confirmDelivered(String name, int orderId) {
 		/*
 		Changes the status of one item in the items table with the name and orderId specified to delivered.
@@ -375,29 +416,81 @@ public class DatabaseHandler {
 	
 	public static int[][] getAllOrderInfo() {
 		/**
+	 * returns metadata about all orders (order id, table id, items received & items they are still waiting for)
+	 */
+
+	try {
+		//First, find out how many orders there are
+		String orderCountStatementText = "SELECT COUNT(order_id) FROM orders WHERE status = 'open'";
+		Statement statement = database.createStatement();
+		ResultSet results = statement.executeQuery(orderCountStatementText);
+		results.next();
+		int orderCount = results.getInt("COUNT(order_id)");
+
+		//Now, create an array of the appropriate size to return
+		int[][] returnArray = new int[orderCount][4];
+
+		//Populate the first two columns of the array with order_id and table_id
+		String orderIdTableIdStatementText = "SELECT order_id, table_id FROM orders WHERE status = 'open'";
+		results = statement.executeQuery(orderIdTableIdStatementText);
+
+		for (int i = 0; results.next(); i++) {
+			returnArray[i][0] = results.getInt("order_id");
+			returnArray[i][1] = results.getInt("table_id");
+		}
+
+		//Now, get the number of items each order have received / are waiting for from the items table
+		for (int i = 0; i < returnArray.length; i++) {
+			String receivedItemsStatementText = String.format("SELECT COUNT(item_id) FROM items WHERE order_id = %d AND status = 'received'", returnArray[i][0]);
+			results = statement.executeQuery(receivedItemsStatementText);
+			if (results.next()) {
+				returnArray[i][2] = results.getInt("COUNT(item_id)");
+			}
+		}
+
+		for (int i = 0; i < returnArray.length; i++) {
+			String waitingItemsStatementText = String.format("SELECT COUNT(item_id) FROM items WHERE order_id = %d AND status = 'waiting'", returnArray[i][0]);
+			results = statement.executeQuery(waitingItemsStatementText);
+			if (results.next()) {
+				returnArray[i][3] = results.getInt("COUNT(item_id)");
+			}
+		}
+
+		//Finally, return the now populated array
+		return returnArray;
+
+	}
+		catch (Exception e) {
+			System.out.print(e);
+			return new int[1][1];
+		}
+	}
+
+	public static int[][] getAllClosedOrderInfo() {
+		/**
 		 * returns metadata about all orders (order id, table id, items received & items they are still waiting for)
 		 */
-		
+
 		try {
 			//First, find out how many orders there are
-			String orderCountStatementText = "SELECT COUNT(order_id) FROM orders WHERE status = 'open'";
+			String orderCountStatementText = "SELECT COUNT(order_id) FROM orders WHERE status = 'closed'";
 			Statement statement = database.createStatement();
 			ResultSet results = statement.executeQuery(orderCountStatementText);
 			results.next();
 			int orderCount = results.getInt("COUNT(order_id)");
-			
+
 			//Now, create an array of the appropriate size to return
 			int[][] returnArray = new int[orderCount][4];
-			
+
 			//Populate the first two columns of the array with order_id and table_id
-			String orderIdTableIdStatementText = "SELECT order_id, table_id FROM orders WHERE status = 'open'";
+			String orderIdTableIdStatementText = "SELECT order_id, table_id FROM orders WHERE status = 'closed'";
 			results = statement.executeQuery(orderIdTableIdStatementText);
-			
+
 			for (int i = 0; results.next(); i++) {
 				returnArray[i][0] = results.getInt("order_id");
 				returnArray[i][1] = results.getInt("table_id");
 			}
-			
+
 			//Now, get the number of items each order have received / are waiting for from the items table
 			for (int i = 0; i < returnArray.length; i++) {
 				String receivedItemsStatementText = String.format("SELECT COUNT(item_id) FROM items WHERE order_id = %d AND status = 'received'", returnArray[i][0]);
@@ -406,7 +499,7 @@ public class DatabaseHandler {
 					returnArray[i][2] = results.getInt("COUNT(item_id)");
 				}
 			}
-			
+
 			for (int i = 0; i < returnArray.length; i++) {
 				String waitingItemsStatementText = String.format("SELECT COUNT(item_id) FROM items WHERE order_id = %d AND status = 'waiting'", returnArray[i][0]);
 				results = statement.executeQuery(waitingItemsStatementText);
@@ -414,17 +507,17 @@ public class DatabaseHandler {
 					returnArray[i][3] = results.getInt("COUNT(item_id)");
 				}
 			}
-			
+
 			//Finally, return the now populated array
 			return returnArray;
-			
+
 		}
 		catch (Exception e) {
 			System.out.print(e);
 			return new int[1][1];
 		}
 	}
-	
+
 	public static int returnMenuItemCount() {
 		/**
 		 * Returns the number of items in the menu

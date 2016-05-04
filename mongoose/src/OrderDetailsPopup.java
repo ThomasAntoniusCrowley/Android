@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.text.StringContent;
 import javax.swing.tree.ExpandVetoException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -22,7 +23,7 @@ public class OrderDetailsPopup extends JFrame {
 
         //Get order data from database
         String[] metadata = new String[2];
-        String[][] itemData = null;
+        String[][] itemData = dbHandler.getOrderContents(id);
 
         try {
             metadata = dbHandler.getOrderMetadata(id);
@@ -36,7 +37,7 @@ public class OrderDetailsPopup extends JFrame {
         JPanel mainPanel = new JPanel();
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.PAGE_AXIS));
-        JLabel orderIdLabel = new JLabel("Order ID: " + String.valueOf(id));
+        final JLabel orderIdLabel = new JLabel("Order ID: " + String.valueOf(id));
         JLabel tableLabel = new JLabel("Table: " + metadata[0]);
         JLabel arrivedLabel = new JLabel("Time arrived: " + metadata[1]);
         mainPanel.setLayout(new BorderLayout());
@@ -65,6 +66,48 @@ public class OrderDetailsPopup extends JFrame {
         buttonPanel.add(printButton);
         buttonPanel.add(confirmPaymentButton);
         bottomPanel.add(buttonPanel);
+
+        class confirmPaymentButtonListener implements ActionListener {
+            private int orderId;
+            confirmPaymentButtonListener(int order) {
+                this.orderId = order;
+            }
+            public void actionPerformed(ActionEvent a) {
+                dbHandler.closeOrder(orderId);
+            }
+
+        }
+        confirmPaymentButton.addActionListener(new confirmPaymentButtonListener(id));
+
+        final String[][] finalItemData = itemData;
+        class printBillButtonListener implements ActionListener {
+            private String[][] items;
+            private String order;
+            private String table;
+            private String arrived;
+
+            printBillButtonListener(String[][] billItems, String orderID, String tableID, String arrivedTime) {
+                this.items = billItems;
+                this.order = orderID;
+                this.table = tableID;
+                this.arrived = arrivedTime;
+            }
+            public void actionPerformed(ActionEvent a) {
+                Bill printBill = new Bill(this.items.length, this.order, this.table, this.arrived);
+                for (int i = 0; i<this.items.length; i++) {
+                    Item itemToAdd = new Item(this.items[i][0], "Category", Integer.parseInt(this.items[i][1]));
+                    printBill.addItem(itemToAdd);
+                }
+                try {
+                    printBill.toFile("./BillOutput");
+                }
+                catch (Exception e) {
+                    System.out.println("Error outputting bill to file.");
+                }
+            }
+        }
+        printButton.addActionListener(new printBillButtonListener(itemData, String.valueOf(id), metadata[0], metadata[1]));
+
 
         //Place the labels at the top
         JPanel topPanel = new JPanel();
@@ -122,8 +165,6 @@ public class OrderDetailsPopup extends JFrame {
                 confirmDeliveredButton.addActionListener(new confirmDeliveredButtonListener(id, name));
             }
         }
-        //Add the panel to the scroll panel
-
 
         //Read order contents into a scrollpane
         JPanel scrollableArea = new JPanel();

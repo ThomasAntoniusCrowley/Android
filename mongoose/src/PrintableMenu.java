@@ -2,6 +2,7 @@
  * Created by jordan on 03/05/16.
  */
 
+import javax.swing.*;
 import java.io.*;
 
 public class PrintableMenu {
@@ -44,8 +45,18 @@ public class PrintableMenu {
             bw.close();
         }
 
+
         catch (IOException e) {
             System.out.println("Error writing to file: " + e);
+        }
+        JTextPane paperPane = new JTextPane();
+        paperPane.setContentType("text/html");
+        paperPane.setText(sb.toString());
+        try {
+            paperPane.print();
+        }
+        catch (Exception e) {
+            System.out.println("Error printing physical menu");
         }
     }
 
@@ -70,7 +81,6 @@ public class PrintableMenu {
                     }
                     else {
                         sb.append(dummy[i][j]);
-                        System.out.println(j);
                     }
                     sb.append("<br><br>");
                     sb.append("</i>");
@@ -93,7 +103,6 @@ public class PrintableMenu {
                     }
                     else {
                         sb.append(dummy[i][j]);
-                        System.out.println(j);
                     }
                     sb.append("<br><br>");
                     sb.append("</i>");
@@ -116,7 +125,6 @@ public class PrintableMenu {
                     }
                     else {
                         sb.append(dummy[i][j]);
-                        System.out.println(j);
                     }
                     sb.append("<br><br>");
                     sb.append("</i>");
@@ -139,7 +147,6 @@ public class PrintableMenu {
                     }
                     else {
                         sb.append(dummy[i][j]);
-                        System.out.println(j);
                     }
                     sb.append("<br><br>");
                     sb.append("</i>");
