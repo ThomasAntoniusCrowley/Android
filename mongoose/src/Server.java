@@ -17,17 +17,16 @@ public class Server implements Runnable {
     private int ID;
     private static int clientCount;
     private DatabaseHandler db;
-    public static final int MAXCLIENTS = 10;
+    private static final int MAXCLIENTS = 10;
 
     public Server(Socket connection, int i) {
         this.connection = connection;
         this.ID = i;
     }
 
-    public void ReceiveBill() {
+    private void ReceiveBill() {
         /**
-         * Skeleton code for receiving order details from client app. Next step is to handle writing to database
-         * file - it's ready to receive an order.
+         * Code for receiving order details from client app. Writes to database.
          */
 
         try //Receives order information from client
@@ -55,7 +54,7 @@ public class Server implements Runnable {
         }
     }
 
-    public void ReceiveTest() {
+    private void ReceiveTest() {
         try //Receives order information from client
         {
             System.out.println("TESTING");
@@ -81,7 +80,7 @@ public class Server implements Runnable {
         }
     }
 
-    public void Disconnect() {
+    private void Disconnect() {
         /**
          * Handles client disconnection. May have to update to handle sudden disconnection as opposed to controlled.
          */
@@ -96,7 +95,7 @@ public class Server implements Runnable {
         }
     }
 
-    public void HandleClient() {
+    private void HandleClient() {
         /**
          * Method runs on each thread in run(), always ready to handle any new client requests.
          */
@@ -111,13 +110,16 @@ public class Server implements Runnable {
             if (request.equals("SENDING_TEST")) {
                 ReceiveTest();
             }
+            if (request.equals("SEND_MENU")) {
+                SendMenu();
+            }
         } catch (Exception e) {
             Disconnect();
             Thread.currentThread().stop();
         }
     }
 
-    public void SendMenu() {
+    private void SendMenu() {
         /**
          * Runs whenever client connects and sends them most recent menu.
          */
@@ -182,7 +184,6 @@ public class Server implements Runnable {
          * Code that runs on each thread. Sends new clients a menu file before waiting for a request from them.
          */
 
-        SendMenu();
         while (true) {
             HandleClient();
         }

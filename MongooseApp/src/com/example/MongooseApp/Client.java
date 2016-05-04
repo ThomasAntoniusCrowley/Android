@@ -61,6 +61,12 @@ public class Client
 
         String[][] menu;
         try {
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(serverSocket.getOutputStream()));
+            System.out.println("Connection established");
+            out.write("SEND_MENU");
+            out.flush();
+            out.close();
+
             BufferedReader in = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
 
             int int1 = in.read(); //Get array dimensions
