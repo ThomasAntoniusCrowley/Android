@@ -1,8 +1,0 @@
-<resources>
-    <string name="app_name">Mongoose App</string>
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_table__selecter">Table_Selecter</string>
-    <string name="title_activity_menu_selecter">Menu_selecter</string>
-    <string name="title_activity_main_courses">MainCourses</string>
-    <string name="title_activity_drinks">drinks</string>
-</resources>

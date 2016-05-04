@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentTop="true"
+    android:layout_alignParentLeft="true" android:layout_alignParentStart="true"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/menu_activity">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Menu"
+        android:id="@+id/menu_title"
+        android:layout_alignParentTop="true" android:layout_centerHorizontal="true" android:layout_weight="0.45"
+        android:layout_gravity="center_horizontal"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+
+        android:id="@+id/table_no"
+        android:layout_gravity="center_horizontal"/>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="358dp"
+        android:id="@+id/listView"
+        />
+
+
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:text="Order"
+        android:id="@+id/order_button" android:layout_below="@+id/desert_button"
+        android:layout_alignRight="@+id/desert_button" android:layout_alignEnd="@+id/desert_button"
+        android:layout_alignParentLeft="true" android:layout_alignParentStart="true" android:layout_weight="0.78"
+        android:onClick="handleButtonClick"/>
+
+
+
+
+</LinearLayout>
