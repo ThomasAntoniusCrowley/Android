@@ -33,30 +33,29 @@ public class Server implements Runnable {
         try //Receives order information from client
         {
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            int table = in.read();
+            int tableNo = in.read();
             int size = in.read();
 
             System.out.println("Order size: " + size);
 
             String[] items = new String[size];
+            System.out.print("Reading order data...");
             for (int i = 0; i < size; i++)
             {
                 items[i] = in.readLine();
             }
+            System.out.print("OK!\n");
 
-            System.out.println("Read order data.");
-
+            System.out.print("Appending to order...");
+            db = new DatabaseHandler();
+            db.addItemsToOrder(items, tableNo);
+            System.out.print("OK!\n");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void AddToOrder()
-    {
-
-    }
-    public void ReceiveTest()
-    {
+    public void ReceiveTest() {
         try //Receives order information from client
         {
             System.out.println("TESTING");
@@ -72,24 +71,15 @@ public class Server implements Runnable {
                 System.out.println(items[i]);
             }
 
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
+            out.write("OK");
+
             System.out.println("Read order data.");
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-//    public void ConfirmTest()
-//    {
-//        try
-//        {
-//            PrintWriter out = new PrintWriter(connection.getOutputStream(), true);
-//            out.println("SENDING_BILL");
-//        } catch(Exception e) {
-//
-//        }
-//    }
-
 
     public void Disconnect() {
         /**
@@ -154,33 +144,7 @@ public class Server implements Runnable {
         {
             e.printStackTrace();
         }
-
-//        try //Sends menu file as object to client
-//        {
-//            ObjectOutputStream outList = new ObjectOutputStream(connection.getOutputStream());
-//            outList.writeObject(menu);
-//            outList.flush();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
     }
-
-//    POTENTIALLY USEFUL CODE
-//    public void LogRequestInfo(String request)
-//    {
-//        try
-//        {
-//            DateFormat dateFormat = new SimpleDateFormat(("dd/MM/yyyy:HH.mm.ss"));
-//            PrintWriter printer = new PrintWriter(new FileWriter("log.txt", true));
-//            Date date = new Date();
-//            printer.printf(dateFormat.format(date) + ":" + connection.getInetAddress() + ":" + request + "%n");
-//            printer.close();
-//        }
-//        catch (Exception e)
-//        {
-//            e.printStackTrace();
-//        }
-//    }
 
     public static void main(String[] args) {
         /**
@@ -196,25 +160,24 @@ public class Server implements Runnable {
         try //Create server socket on specified port
         {
             ServerSocket socket = new ServerSocket(port);
-            System.out.println("Server ready.");
+            System.out.println("Server ready!");
             while (clientCount <= MAXCLIENTS) //Create loop to instantiate threads for new clients
             {
                 Socket connection = socket.accept();
-                System.out.println("Client accepted.");
+                System.out.println("Client accepted");
 
                 Runnable runnable = new Server(connection, ++clientCount);
                 executor.execute(runnable);
-                System.out.println("Thread started.");
+                System.out.println("Thread started");
 
             }
-            System.out.println("Client limit reached.");
+            System.out.println("Client limit reached");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void run() //This code will run on each thread
-    {
+    public void run() {
         /**
          * Code that runs on each thread. Sends new clients a menu file before waiting for a request from them.
          */

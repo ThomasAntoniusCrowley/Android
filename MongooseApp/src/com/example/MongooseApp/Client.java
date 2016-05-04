@@ -16,19 +16,18 @@ import java.util.Map;
 public class Client
 {
 //    public String[][] menu;
-    private static String host;
-    private static int port;
-    private static InetAddress inet;
+    private String host = "192.168.43.224";
+    private int port = 19999;
+    private InetAddress inet;
     private static Socket serverSocket;
 
-    public Client(String host, int port)
-    {
-        this.host = host; //Initialise connection parameters
-        this.port = port;
+    public Client() {
         try
         {
+            System.out.print("Trying to create socket to " + host + " on port " + port + "...");
             this.inet = InetAddress.getByName(host);
             this.serverSocket = new Socket(this.inet, this.port);
+            System.out.print("OK!\n");
         }
         catch (Exception e)
         {
@@ -37,18 +36,13 @@ public class Client
 
         System.out.println("Host name :  " + inet.getHostName());
         System.out.println("IP Address:  " + inet.getHostAddress());
-        System.out.println("Connection established.");
     }
 
-    public void InitConnection()
-    {
-        String host = "localhost";
-        int port = 19999;
-        Client connection = new Client(host, port);
+    public void connect() {
+        SendTest();
     }
 
-    public void Disconnect()
-    {
+    public void Disconnect() {
         try //Disconnect from server
         {
             serverSocket.close();
@@ -60,10 +54,11 @@ public class Client
         }
     }
 
-    /**
-     * Runs on connect to server and pulls most recent menu as 2D array.
-     */
-    public String[][] ReceiveMenu() {
+    public static String[][] ReceiveMenu() {
+        /**
+         * Runs on connect to server and pulls most recent menu as 2D array.
+         */
+
         String[][] menu;
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
@@ -86,9 +81,7 @@ public class Client
         return null;
     }
 
-
-    public String[][] SortedMenu(String[][] menu)
-    {
+    public static String[][] SortedMenu(String[][] menu) {
         final Map<String, Integer> dict = new HashMap<String, Integer>();
         dict.put("starters", 0);
         dict.put("mains", 1);
@@ -107,6 +100,7 @@ public class Client
                 menu[i + 1] = tmpRow;
             }
         }
+
 //        Arrays.sort(menu, new Comparator<String[]>() {
 //            @Override
 //            public int compare(String[] item1, String[] item2) {
@@ -122,20 +116,23 @@ public class Client
         return menu;
     }
 
-    /**
-     * Method used for sending order details to server application.
-     *
-     * @param items Item array holding order data.
-     * @param tableNo Integer holding table number to associate order with any open orders
-     */
-    public void SendBill(String[] items, int tableNo) //UNDER CONSTRUCTION
-    {
-        InitConnection();
+    public void SendBill(String[] items, int tableNo) {
+        /**
+         * Method used for sending order details to server application.
+         *
+         * @param items Item array holding order data.
+         * @param tableNo Integer holding table number to associate order with any open orders
+         */
+
         try //Informs server of incoming data and sends byte array containing image
         {
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(serverSocket.getOutputStream()));
+            System.out.println("Connection established");
             out.write("SENDING_BILL");
+
             System.out.println("Order size: " + items.length);
+
+            System.out.print("Sending order data...");
             out.write(tableNo);
             out.write(items.length);
 
@@ -143,11 +140,10 @@ public class Client
             {
                 out.write(items[i]);
             }
+            System.out.print("OK!\n");
 
             out.flush();
             out.close();
-
-            System.out.println("Sent order data.");
         }
         catch (Exception e)
         {
@@ -155,14 +151,15 @@ public class Client
         }
     }
 
-    public static void main(String[] args)
-    {
-//        JFrame ui = new ClientUI(connection, fileList);
-//        ui.setVisible(true);
+    public static void main(String[] args) {
+
     }
 
-    public static void SendTest()
-    {
+    public void SendTest() {
+        /**
+         * Test procedure for connecting to server and transmitting string array.
+         */
+
         try //Informs server of incoming data and sends byte array containing image
         {
             String[] items = new String[5];
@@ -173,7 +170,9 @@ public class Client
             items[4] = "Test string five\n";
 
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(serverSocket.getOutputStream()));
+            System.out.println("Connection established.");
             out.write("SENDING_TEST");
+
             System.out.println(items.length);
             out.write(items.length);
 
@@ -181,10 +180,14 @@ public class Client
             {
                 out.write(items[i]);
             }
-            out.flush();
-            out.close();
 
-            System.out.println("Sent order data.");
+            System.out.print("Confirming transmission...");
+            BufferedReader in = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
+            String confirmed = in.readLine();
+            if (confirmed == "OK")
+            {
+                System.out.print("OK!");
+            }
         }
         catch (Exception e)
         {
