@@ -1,40 +1,32 @@
 import java.awt.*;
 
 /**
+ * Class to create a Table object with relevant attributes for TablesGUI
+ *
  * Created by jordan on 19/02/16.
  */
 public class Table {
 
     private String peopleCount;
-    private String reservedFrom;
-    private String reservedTo;
-    private String[] reservationTimes;
+    private boolean reservedStatus;
 
-    private boolean reserveStatus;
     private int tableNumber;
     private int gridHeight;
     private int gridWidth;
     private int xLocation;
     private int yLocation;
 
+    //Getters and Setters
     public String getPeopleCount() {
         return peopleCount;
-    }
-
-    public String getReservedFrom() {
-        return reservedFrom;
-    }
-
-    public String getReservedTo() {
-        return reservedTo;
     }
 
     public int getTableNumber() {
         return tableNumber;
     }
 
-    public boolean getReserveStatus() {
-        return reserveStatus;
+    public boolean getReservedStatus() {
+        return reservedStatus;
     }
 
     public int getGridHeight() {
@@ -53,23 +45,21 @@ public class Table {
         return xLocation;
     }
 
-    public void setReservedFrom(String reservedFrom) {
-        this.reservedFrom = reservedFrom;
+    public void setReservedStatus(boolean reservedStatus) {
+        this.reservedStatus = reservedStatus;
     }
 
-    public void setReservedTo(String reservedTo) {
-        this.reservedTo = reservedTo;
-    }
-
+    //Constructor for Table class with parameters
     Table(String peopleCount, int xLocation, int yLocation, int tableNumber) {
 
+        //Instantiates parameters
         this.peopleCount = peopleCount;
         this.tableNumber = tableNumber;
         this.xLocation = xLocation;
         this.yLocation = yLocation;
 
-        reservationTimes = new String[10];
-
+        //Decides how much visual window space each table is
+        //allow based on the amount of people it seats
         if (peopleCount == "2") {
             this.gridWidth = 1;
             this.gridHeight = 1;
@@ -89,14 +79,9 @@ public class Table {
             this.gridWidth = 2;
             this.gridHeight = 2;
         }
-        reserveStatus = true;
-    }
-
-    public void determineReservedStatus() {
 
     }
 
     public static void main(String[] args) {
-        Table table = new Table("2", 0, 0, 1);
     }
 }

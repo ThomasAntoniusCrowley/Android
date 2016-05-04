@@ -254,22 +254,32 @@ public class NewBookingPopup extends JFrame {
         class email implements ActionListener {
             public void actionPerformed (ActionEvent a) {
                 String to = email.getText();
-                String from = "softwaremongoose@gmail.com";
-                final String username = "softwaremongoose@gmail.com";
+                String from = "mongooseproject@hotmail.com";
+                final String username = "mongooseproject@hotmail.com";
                 final String password = "mongoose123";
 
 
                 Properties properties = new Properties();
-                properties.put("mail.smtp.host", "smtp.gmail.com");
-                properties.put("mail.smtp.socketFactory.port", "465");
-                properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+                properties.put("mail.smtp.starttls.enable", "true");
+                
+                properties.setProperty("mail.smtp.host", "smtp-mail.outlook.com");
+                properties.setProperty("mail.smtp.port", "587");
+                
+                properties.setProperty("mail.smtp.socketFactory.port", "587");
+                properties.setProperty("mail.smtp.socketFactory.class", 
+                						"javax.net.ssl.SSLSocketFactory");
+                properties.setProperty("mail.smtp.socketFactory.fallback", "false");               
+
+                
+                properties.put("mail.smtp.connectiontimeout", "10000");
+                properties.put("mail.smtp.timeout", "10000");
+                properties.put("mail.transport.protocol", "smtp");
                 properties.put("mail.smtp.auth", "true");
-                properties.put("mail.smtp.port", "465");
-                properties.put("mail.smtp.connectiontimeout", "5000");
-                properties.put("mail.smtp.timeout", "5000");
+                properties.put("mail.smtp.ssl.trust", "smtp-mail.outlook.com");
 
 
-                Session session = Session.getDefaultInstance(properties, new javax.mail.Authenticator() {
+                Session session;
+                session = Session.getInstance(properties, new Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication(username, password);
                     }
@@ -279,23 +289,32 @@ public class NewBookingPopup extends JFrame {
                 try {
 
                     MimeMessage message = new MimeMessage(session);
-
-                    message.setFrom(new InternetAddress(from));
-
-                    message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
-
+                    
+                    InternetAddress userAddress = new InternetAddress();
+                    userAddress.setAddress(from);
+                    InternetAddress recipientAddress = new InternetAddress();
+                    recipientAddress.setAddress(to);
+                    
+                    message.setFrom(userAddress);
+                    message.setRecipient(Message.RecipientType.TO, recipientAddress);
 
                     message.setSubject("Booking Confirmation at Mongoose Restaurant, Reference: "
                             + referenceNumber.getText());
 
-                    message.setText("Hello " + customer.getText() + "Your table is booked for "
+                    message.setText("Hello " + customer.getText() + ", \nYour table is booked for "
                             + timePick.getSelectedItem().toString()
-                            + " on: " + dateField.getText()
-                            + ". We look forward to seeing you, reply to this email if you have any queries!");
+                            + "pm on: " + dateField.getText()
+                            + ".\n We look forward to seeing you, reply to this email if you have"
+                            + " any queries!", "utf-8");
 
 
                     System.out.println("Sending confirmation email...");
-                    Transport.send(message);
+                    Transport thisTransport = session.getTransport("smtp");
+
+                    thisTransport.connect("smtp-mail.outlook.com", username, password);
+
+                    thisTransport.sendMessage(message, message.getAllRecipients());
+                    thisTransport.close();
                     System.out.println("Confirmation Sent.");
 
                 } catch (MessagingException mex) {
@@ -404,4 +423,3 @@ public class NewBookingPopup extends JFrame {
         });
     }
 }
-

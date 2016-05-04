@@ -4,7 +4,7 @@ import java.awt.event.ActionListener;
 import java.text.NumberFormat;
 import javax.swing.*;
 import javax.swing.text.NumberFormatter;
-import javax.xml.crypto.Data;
+
 
 public class CentralGUI extends JFrame {
 
@@ -22,11 +22,14 @@ public class CentralGUI extends JFrame {
     private 	JLabel 		portLabel;
     private 	JLabel 		connectionsLabel;
     private     JPanel      ordersTab;
+    private     JPanel      pastOrdersTab;
+    private     JPanel      tablesTab;
     private 	JPanel 		ordersTabScrollableArea;
+    private     JPanel      pastOrdersTabScrollableArea;
     private     JPanel      bookingsTabScrollableArea;
     private 	JPanel 		menuTabScrollableArea;
 
-    public CentralGUI() {
+    public CentralGUI(String ip, String port) {
 
         //Basic setup
         setTitle("Server GUI");
@@ -45,6 +48,7 @@ public class CentralGUI extends JFrame {
         //Create the tabbed pane, and add the tabs to it - code for creating each tab is contained in its own function.
         tabbedPane = new JTabbedPane();
         createOrdersTab();
+        createPastOrdersTab();
         createBookingsTab();
         createTablesTab();
         createMenuTab();
@@ -55,9 +59,9 @@ public class CentralGUI extends JFrame {
 
         //Create the connection info box at the top
         JLabel ipLabelTag = new JLabel("Current IP address:");
-        ipLabel = new JLabel("xxx.xxx.xxx.xxx");
+        ipLabel = new JLabel(ip);
         JLabel portLabelTag = new JLabel("Current port:");
-        portLabel = new JLabel("xx");
+        portLabel = new JLabel(port);
 
         JPanel ipLayout = new JPanel(new FlowLayout(FlowLayout.LEFT));
         ipLayout.add(ipLabelTag);
@@ -77,6 +81,8 @@ public class CentralGUI extends JFrame {
         connectionLayout.setBorder(BorderFactory.createTitledBorder("Current connection info:"));
 
         topPanel.add(connectionLayout, BorderLayout.NORTH);
+
+        this.setVisible(true);
     }
 
     private void createOrdersTab() {
@@ -99,11 +105,12 @@ public class CentralGUI extends JFrame {
         class refreshButtonListener implements ActionListener {
             public void actionPerformed (ActionEvent a) {
                 populateOrdersTab();
-                ordersTabScrollableArea.updateUI();
-                ordersTab.updateUI();
-                ordersTab.repaint();
+                tabbedPane.invalidate();
+                tabbedPane.repaint();
+                refreshTablesTab();
             }
         }
+
         refreshButton.addActionListener(new refreshButtonListener());
 
         class addOrderPopup extends JFrame {
@@ -111,7 +118,7 @@ public class CentralGUI extends JFrame {
             popup for when the add order button is pressed
              */
             addOrderPopup() {
-                this.setMinimumSize(new Dimension(300,300));
+                this.setMinimumSize(new Dimension(200,200));
                 this.setTitle("Create a new order");
                 this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
                 JPanel mainPanel = new JPanel();
@@ -126,9 +133,8 @@ public class CentralGUI extends JFrame {
                     public void actionPerformed (ActionEvent a) {
                         DatabaseHandler dbHandler = new DatabaseHandler();
                         dbHandler.createOrder(Integer.parseInt(tableComboBox.getSelectedItem().toString()));
-                        ordersTabScrollableArea.updateUI();
-                        ordersTab.updateUI();
-                        ordersTab.repaint();
+                        populateOrdersTab();
+                        refreshTablesTab();
                     }
                 }
                 okayButton.addActionListener(new okayButtonListener());
@@ -164,10 +170,13 @@ public class CentralGUI extends JFrame {
             /*
              * A class for the panel that contains all the info on an order, in the orders tab
              */
+            public int orderID;
+
             OrderPanel(int id, int table, int received, int waiting) {
 				/*
 				 * Basic setup of the panel elements
 				 */
+
 
                 //Create swing components
                 JLabel orderIDLabel = new JLabel(String.format("Order id: %d", id));
@@ -177,6 +186,14 @@ public class CentralGUI extends JFrame {
                 JButton detailsButton = new JButton("Details");
                 JPanel buttonPanel = new JPanel();
                 buttonPanel.add(detailsButton);
+                this.orderID = id;
+
+                class detailsButtonListener implements ActionListener {
+                    public void actionPerformed (ActionEvent a) {
+                        createDetailsPopup();
+                    }
+                }
+                detailsButton.addActionListener(new detailsButtonListener());
 
                 //Layout the components
                 this.setAlignmentX(LEFT_ALIGNMENT);
@@ -190,6 +207,10 @@ public class CentralGUI extends JFrame {
                 this.add(buttonPanel);
                 this.add(receivedLabel);
                 this.add(waitingLabel);
+            }
+
+            public void createDetailsPopup() {
+                new OrderDetailsPopup(orderID);
             }
         }
 
@@ -205,11 +226,111 @@ public class CentralGUI extends JFrame {
             OrderPanel generatedOrderPanel = new OrderPanel(allOrderInfo[i][0], allOrderInfo[i][1], allOrderInfo[i][2], allOrderInfo[i][3]);
             ordersTabCentralArea.add(generatedOrderPanel, BorderLayout.CENTER);
         }
-
+        ordersTabScrollableArea.removeAll();
         ordersTabScrollableArea.add(ordersTabCentralArea, BorderLayout.CENTER);
-        ordersTab.updateUI();
+        ordersTab.revalidate();
+        ordersTab.repaint();
 
     }
+
+    private void createPastOrdersTab() {
+        //Create the scrollable orders tab
+        pastOrdersTabScrollableArea = new JPanel(new BorderLayout());
+        pastOrdersTab = new JPanel(new BorderLayout());
+        pastOrdersTab.add(new JScrollPane(pastOrdersTabScrollableArea), BorderLayout.CENTER);
+        tabbedPane.add(pastOrdersTab, "Past Orders");
+
+        //Set up the button at the bottom
+        JPanel buttonArea = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton refreshButton = new JButton("Refresh");
+        buttonArea.add(refreshButton);
+        pastOrdersTab.add(buttonArea, BorderLayout.SOUTH);
+
+        //Add button listeners for the buttons
+        class refreshButtonListener implements ActionListener {
+            public void actionPerformed (ActionEvent a) {
+                populatePastOrdersTab();
+                tabbedPane.invalidate();
+                tabbedPane.repaint();
+                refreshTablesTab();
+            }
+        }
+        refreshButton.addActionListener(new refreshButtonListener());
+
+        populatePastOrdersTab();
+    }
+
+    private void populatePastOrdersTab() {
+		/*
+		 * Method to read order info from the database, and fill the pastOrders tab with this OrderPanel objects containing this info
+		 */
+
+            class OrderPanel extends JPanel {
+                /*
+                 * A class for the panel that contains all the info on an order, in the orders tab
+                 */
+                public int orderID;
+
+                OrderPanel(int id, int table, int received, int waiting) {
+				/*
+				 * Basic setup of the panel elements
+				 */
+
+
+                    //Create swing components
+                    JLabel orderIDLabel = new JLabel(String.format("Order id: %d", id));
+                    JLabel tableIDLabel = new JLabel(String.format("Table: %d", table));
+                    JLabel waitingLabel = new JLabel(String.format("Waiting: %d", waiting));
+                    JLabel receivedLabel = new JLabel(String.format("Received: %d", received));
+                    JButton detailsButton = new JButton("Details");
+                    JPanel buttonPanel = new JPanel();
+                    buttonPanel.add(detailsButton);
+                    this.orderID = id;
+
+                    class detailsButtonListener implements ActionListener {
+                        public void actionPerformed (ActionEvent a) {
+                            createDetailsPopup();
+                        }
+                    }
+                    detailsButton.addActionListener(new detailsButtonListener());
+
+                    //Layout the components
+                    this.setAlignmentX(LEFT_ALIGNMENT);
+                    this.setMaximumSize(new Dimension(99999, 65));
+                    this.setBorder(BorderFactory.createDashedBorder(getForeground()));
+                    this.setLayout(new GridLayout(2,3));
+
+                    //Add components to layout
+                    this.add(orderIDLabel);
+                    this.add(tableIDLabel);
+                    this.add(buttonPanel);
+                    this.add(receivedLabel);
+                    this.add(waitingLabel);
+                }
+
+                public void createDetailsPopup() {
+                    new OrderDetailsPopup(orderID);
+                }
+            }
+
+            //Create a database handler and use its methods to pull info from the database
+            DatabaseHandler dbHandler = new DatabaseHandler();
+            int[][] allOrderInfo = dbHandler.getAllClosedOrderInfo();
+
+            //Format the info into OrderPanel objects and place them in the orders tab
+            JPanel pastOrdersTabCentralArea = new JPanel();
+            pastOrdersTabCentralArea.setLayout(new BoxLayout(pastOrdersTabCentralArea, BoxLayout.PAGE_AXIS));
+
+            for (int i = 0; i < allOrderInfo.length; i++) {
+                OrderPanel generatedOrderPanel = new OrderPanel(allOrderInfo[i][0], allOrderInfo[i][1], allOrderInfo[i][2], allOrderInfo[i][3]);
+                pastOrdersTabCentralArea.add(generatedOrderPanel, BorderLayout.CENTER);
+            }
+            pastOrdersTabScrollableArea.removeAll();
+            pastOrdersTabScrollableArea.add(pastOrdersTabCentralArea, BorderLayout.CENTER);
+            pastOrdersTab.revalidate();
+            pastOrdersTab.repaint();
+
+        }
 
     private void createBookingsTab() {
         /*
@@ -386,8 +507,19 @@ public class CentralGUI extends JFrame {
         /*
         Adds a tab to the tabbed layout with the table availability visualiser in it
          */
-        TablesGUI tablesTab = new TablesGUI("whatever");
+        tablesTab = new JPanel();
+        TablesGUI tablesGUI = new TablesGUI("");
+        tablesTab.add(tablesGUI);
         tabbedPane.add(tablesTab, "Tables");
+
+    }
+
+    public void refreshTablesTab() {
+        /*
+        Refreshes tablesTab with current table data
+         */
+        tablesTab.removeAll();
+        tablesTab.add(new TablesGUI(""));
 
     }
 
@@ -406,8 +538,10 @@ public class CentralGUI extends JFrame {
         JPanel buttonArea = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton addItemButton = new JButton("Add menu item");
         JButton refreshButton = new JButton("Refresh");
+        JButton printButton = new JButton("Generate printable menu");
         buttonArea.add(addItemButton);
         buttonArea.add(refreshButton);
+        buttonArea.add(printButton);
         menuTab.add(buttonArea, BorderLayout.SOUTH);
 
         //Define the function for adding menu items
@@ -518,7 +652,13 @@ public class CentralGUI extends JFrame {
             }
         }
         addItemButton.addActionListener(new addItemButtonListener());
-        ordersTab.updateUI();
+
+        class printButtonListener implements ActionListener {
+            public void actionPerformed (ActionEvent a) {
+                new PrintableMenu();
+            }
+        }
+        printButton.addActionListener(new printButtonListener());
     }
 
     public void populateMenuTab() {
@@ -652,15 +792,12 @@ public class CentralGUI extends JFrame {
         displayButton.addActionListener(new displayButtonListener());
     }
 
-
     public static void main(String[] args) {
 
         //create and make visible a new gui
 
-        CentralGUI mainFrame = new CentralGUI();
+        CentralGUI mainFrame = new CentralGUI("xxxx.xxxx.xxxx.xxxx", "xxxx");
         mainFrame.setVisible(true);
     }
-
-
 
 }

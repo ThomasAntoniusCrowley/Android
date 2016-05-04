@@ -10,9 +10,8 @@ import java.util.Arrays;
 public class Item {
 
 	private String thisName;
-	private String thisFoodOrDrink;
 	private String thisCategory;
-	private double thisPrice; 
+	private int thisPrice;
 	private int categoriesSize;
 	private String[] categories;
 	
@@ -27,24 +26,19 @@ public class Item {
 		return thisName;
 	}
 
-	public String getThisFoodOrDrink() {
-		return thisFoodOrDrink;
-	}
-
 	public String getThisCategory() {
 		return thisCategory;
 	}
 
-	public double getThisPrice() {
+	public int getThisPrice() {
 		return thisPrice;
 	}
 
     //Setters not needed as any item input is final (if its done with it can be removed)
 
 	//Initialises variables, creates valid categories list and tests parameters
-	Item(String name, String foodOrDrink, String category, double price) {
+	Item(String name, String category, int price) {
 		thisName = name;
-		thisFoodOrDrink = foodOrDrink;
 		thisCategory = category;
 		thisPrice = price;
 
@@ -64,9 +58,6 @@ public class Item {
 		categories[8] = "Wine";
 		categories[9] = "Cocktail";
 		categories[10] = "Beer";
-		testCategory();
-		testFoodOrDrink();
-		testPrice();
 	}
 
 	//Ensures a valid category has been input
@@ -75,16 +66,6 @@ public class Item {
 			throw new IllegalArgumentException("Error: invalid " +
 					"category, ensure each word is capitalized.");
 		}
-	}
-
-	//Ensures a valid keyword has been input for food or drink
-	public void testFoodOrDrink() {
-		if (!(thisFoodOrDrink.equals("Food") || 
-				thisFoodOrDrink.equals("Drink"))) {
-			throw new IllegalArgumentException("Error: " +
-					"foodOrDrink must be input as 'Food' " +
-					"or 'Drink' only");
-		}		
 	}
 
 	//Ensures the price entered is to 2 decimal places
@@ -111,7 +92,7 @@ public class Item {
 
 	//Returns a formatted string of the Item
 	@Override public String toString() {
-		itemString = (thisName + " " + thisFoodOrDrink + " " + 
+		itemString = (thisName + " " + " " +
 						thisCategory + " £" + thisPrice);
 		return itemString;
 	}
