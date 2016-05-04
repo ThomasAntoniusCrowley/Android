@@ -49,12 +49,6 @@ public class SalesTable extends JPanel {
                 currentYear++;
                 currentMonth = 1;
             }
-
         }
-
-
-
     }
-
-
 }

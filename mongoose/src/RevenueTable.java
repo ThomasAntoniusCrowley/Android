@@ -64,22 +64,6 @@ public class RevenueTable extends JPanel {
             }
             this.add(new JLabel(revenueChange));
             lastMonthsRevenue = revenueData[i][2];
-
         }
-
-
-
     }
-
-    public static void main(String[] argv) {
-        RevenueTable revTable = new RevenueTable();
-
-        JFrame newFrame = new JFrame();
-        newFrame.setMinimumSize(new Dimension(500,500));
-        newFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        newFrame.add(revTable);
-
-        newFrame.setVisible(true);
-    }
-
 }

@@ -12,7 +12,7 @@ public class Item {
 	private String thisName;
 	private String thisFoodOrDrink;
 	private String thisCategory;
-	private double thisPrice; 
+	private double thisPrice;
 	private int categoriesSize;
 	private String[] categories;
 	

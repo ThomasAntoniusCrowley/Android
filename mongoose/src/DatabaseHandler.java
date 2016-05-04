@@ -223,11 +223,70 @@ public class DatabaseHandler {
 		}
 		return returnArray;
 	}
-	
+
+	public int getOrderItemCount(int id) {
+		/*
+		Returns the number of items associated with an order
+		 */
+		int count = 0;
+
+		try {
+			String queryText = String.format("SELECT count(item_id) FROM items WHERE order_id = %d;", id);
+			Statement stmt = database.createStatement();
+
+			ResultSet results = stmt.executeQuery(queryText);
+
+			results.next();
+			count = results.getInt("count(item_id)");
+		}
+		catch (Exception e) {
+			System.out.println("Error getting item count for order: " + id);
+		}
+		return count;
+	}
+
+	public String[][] getOrderContents(int id) {
+		/**
+		 * Takes an integer id for an order or table, then reads all the relevant order info for that table from
+		 *  the database and formats it into a string array then returns it.
+		 *
+		 *  Returns in the format {"name", "Price", "Status"}
+		 *
+		 *  Placeholder function until order class is finished
+		 */
+
+		String queryText = String.format(	"SELECT * FROM " +
+											"items INNER JOIN menu ON items.item_id = menu.id " +
+											"WHERE order_id = %d;", id);
+
+		String[][] returnArray = new String[getOrderItemCount(id)][3];
+
+		try {
+			Statement stmt = database.createStatement();
+			ResultSet results = stmt.executeQuery(queryText);
+
+			int i = 0;
+			while (results.next()) {
+				returnArray[i][0] = results.getString("name");
+				int priceInt = results.getInt("price");
+				String priceString = String.format("£%d.%02d", priceInt/100, priceInt%100);
+				returnArray[i][1] = String.valueOf(priceInt);
+				returnArray[i][2] = results.getString("status");
+				i++;
+			}
+		}
+		catch (Exception e) {
+			System.out.println("Error getting items for order id " + id);
+		}
+		return returnArray;
+	}
+
 	public String[] getOrderInfo(int id) {
 		/**
 		 * Takes an integer id for an order or table, then reads all the relevant order info for that table from
 		 *  the database and formats it into a string array then returns it.
+		 *
+		 *  Returns in the format {"name", "Price", "Status"}
 		 *  
 		 *  Placeholder function until order class is finished
 		 */
@@ -277,6 +336,41 @@ public class DatabaseHandler {
 		
 		//TEST CODE REMOVE
 		return new String[] {"",""};
+	}
+
+	public int getIdFromName(String name) {
+		/*
+		Gets the item id from a name string
+		 */
+		String queryText = String.format("SELECT * FROM menu WHERE name = '%s'", name);
+		int id = 0;
+		try {
+			Statement stmt = database.createStatement();
+			ResultSet results = stmt.executeQuery(queryText);
+			results.next();
+			id = results.getInt("id");
+		}
+		catch (Exception e) {
+			System.out.println("Error getting item id from name string");
+		}
+
+		return id;
+	}
+
+	public void confirmDelivered(String name, int orderId) {
+		/*
+		Changes the status of one item in the items table with the name and orderId specified to delivered.
+		 */
+
+		int itemId = getIdFromName(name);
+		try {
+			String statementText = String.format("UPDATE items SET status = 'received' WHERE order_id = %d AND item_id = %d LIMIT 1",orderId, itemId);
+			Statement stmt = database.createStatement();
+			stmt.execute(statementText);
+		}
+		catch (Exception e) {
+			System.out.println("Error confirming delivery of item.");
+		}
 	}
 	
 	public static int[][] getAllOrderInfo() {
