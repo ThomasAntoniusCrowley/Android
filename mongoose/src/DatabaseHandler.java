@@ -191,10 +191,30 @@ public class DatabaseHandler {
 		}
 	}
 
-	public void addItemsToOrder(String[] items, int orderId) {
+	public void addItemsToOrder(String[] items, int tableId) {
 		/*
 		Accepts an array of strings, each being an item name, and adds each one to items associated with a given orderId
 		 */
+		//if there is no open order associated with the table, make one
+		int[] tableStatus = getTableStatus();
+		if (tableStatus[tableId] == 0) {
+			createOrder(tableId);
+		}
+
+		//Get an order id from the table id
+		int orderId = 0;
+		try {
+			String orderQueryText = "SELECT * FROM orders WHERE tableId = %d AND status = 'open'";
+			Statement stmt = database.createStatement();
+			ResultSet results = stmt.executeQuery(orderQueryText);
+			results.next();
+			orderId = results.getInt("order_id");
+		}
+		catch (Exception e) {
+			System.out.println("Error getting order id from table id");
+		}
+
+		//Place it in with the order id
 		for (String item: items) {
 			String statementText = String.format("INSERT INTO items (item_id, order_id, status) VALUES (%d, %d, 'waiting')", getIdFromName(item), orderId);
 			try {

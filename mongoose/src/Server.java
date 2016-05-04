@@ -17,24 +17,28 @@ public class Server implements Runnable {
     private int ID;
     private static int clientCount;
     private DatabaseHandler db;
-    private static final int MAXCLIENTS = 10;
+    public static final int MAXCLIENTS = 10;
 
     public Server(Socket connection, int i) {
         this.connection = connection;
         this.ID = i;
+
     }
 
-    private void ReceiveBill() {
+    public void ReceiveBill(BufferedReader in) {
         /**
-         * Code for receiving order details from client app. Writes to database.
+         * Skeleton code for receiving order details from client app. Next step is to handle writing to database
+         * file - it's ready to receive an order.
          */
-
+        System.out.println("Preparing to receive Bill");
         try //Receives order information from client
         {
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            int tableNo = in.read();
-            int size = in.read();
+            //BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
+            int tableNo = in.read();
+            System.out.println(String.format("Table number: %d", tableNo));
+
+            int size = (in.read());
             System.out.println("Order size: " + size);
 
             String[] items = new String[size];
@@ -42,6 +46,7 @@ public class Server implements Runnable {
             for (int i = 0; i < size; i++)
             {
                 items[i] = in.readLine();
+                System.out.println("Accepting item: " + items[i]);
             }
             System.out.print("OK!\n");
 
@@ -54,7 +59,7 @@ public class Server implements Runnable {
         }
     }
 
-    private void ReceiveTest() {
+    public void ReceiveTest() {
         try //Receives order information from client
         {
             System.out.println("TESTING");
@@ -80,7 +85,7 @@ public class Server implements Runnable {
         }
     }
 
-    private void Disconnect() {
+    public void Disconnect() {
         /**
          * Handles client disconnection. May have to update to handle sudden disconnection as opposed to controlled.
          */
@@ -95,7 +100,7 @@ public class Server implements Runnable {
         }
     }
 
-    private void HandleClient() {
+    public void HandleClient() {
         /**
          * Method runs on each thread in run(), always ready to handle any new client requests.
          */
@@ -104,13 +109,14 @@ public class Server implements Runnable {
         {
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String request = in.readLine();
+            System.out.println(String.format("RECEIVED REQUEST: %s FROM CLIENT", request));
             if (request.equals("SENDING_BILL")) {
-                ReceiveBill();
+                ReceiveBill(in);
             }
             if (request.equals("SENDING_TEST")) {
                 ReceiveTest();
             }
-            if (request.equals("SEND_MENU")) {
+            if (request.equals("SEND_MENU")){
                 SendMenu();
             }
         } catch (Exception e) {
@@ -119,14 +125,13 @@ public class Server implements Runnable {
         }
     }
 
-    private void SendMenu() {
+    public void SendMenu() {
         /**
          * Runs whenever client connects and sends them most recent menu.
          */
-
+        System.out.println("Sending Menu");
         db = new DatabaseHandler();
-        String[][] menu = db.returnDummyMenu();
-        System.out.println(menu[0][0]);
+        String[][] menu = db.returnMenuAsArray();
         try {
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
 
@@ -140,7 +145,6 @@ public class Server implements Runnable {
                     out.write(menu[i][j] + "\n");
                 }
             }
-            out.flush();
             out.close();
         } catch (Exception e)
         {
@@ -154,6 +158,9 @@ public class Server implements Runnable {
          * Uses clientCount and MAXCLIENTS to ensure the thread pool remains controlled by rejecting clients once
          * limit has been reached.
          */
+
+        //Crreate a GUI popup
+        CentralGUI centralGUI = new CentralGUI("192.168.43.224", "19999");
 
         int port = 19999;
         clientCount = 0;
