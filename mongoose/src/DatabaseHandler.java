@@ -197,14 +197,14 @@ public class DatabaseHandler {
 		 */
 		//if there is no open order associated with the table, make one
 		int[] tableStatus = getTableStatus();
-		if (tableStatus[tableId] == 0) {
+		if (tableStatus[tableId-1] == 0) {
 			createOrder(tableId);
 		}
 
 		//Get an order id from the table id
 		int orderId = 0;
 		try {
-			String orderQueryText = "SELECT * FROM orders WHERE tableId = %d AND status = 'open'";
+			String orderQueryText = String.format("SELECT * FROM orders WHERE table_id = %d AND status = 'open';", tableId);
 			Statement stmt = database.createStatement();
 			ResultSet results = stmt.executeQuery(orderQueryText);
 			results.next();
