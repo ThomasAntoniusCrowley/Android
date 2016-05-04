@@ -20,11 +20,11 @@ public class BillTest
     @Before
     public void setUp()
     {
-        billTest = new Bill(4);
-        beefBurger = new Item("Beef Burger", "Food", "Burger", 12.00);
-        veggieBurger = new Item("Veggie Burger", "Food", "Burger", 11.50);
-        mojito = new Item("Mojito", "Drink", "Cocktail", 4.50);
-        guiness = new Item("Guiness", "Drink", "Beer", 2.80);
+        billTest = new Bill(4,"code", "2", "3");
+        beefBurger = new Item("Beef Burger", "Burger", 1200);
+        veggieBurger = new Item("Veggie Burger", "Burger", 1150);
+        mojito = new Item("Mojito", "Drink",  450);
+        guiness = new Item("Guiness", "Drink", 280);
         billTest.addItem(beefBurger);
         billTest.addItem(veggieBurger);
         billTest.addItem(mojito);
@@ -50,7 +50,7 @@ public class BillTest
     {
         double tot = billTest.getTotal();
 
-        assertTrue(tot == 30.80);
+        assertTrue(tot == 3080);
 
     }
 

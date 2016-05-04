@@ -20,7 +20,9 @@ public class Item {
 	private int decimalLength;
 	
 	private String itemString;
-	
+
+
+
 	//Getter methods for Item object parameters
 	public String getThisName() {
 		return thisName;

@@ -16,7 +16,7 @@ public class ItemTest {
     @Before
     public void setUp()
     {
-        beefBurger= new Item("Beef Burger", "Food", "Burger", 12.00 );
+        beefBurger= new Item("Beef Burger", "Burger", 1200 );
     }
 
     @Test
@@ -28,13 +28,13 @@ public class ItemTest {
     }
 
 
-    @Test
-    public void foodOrDrinkTest()
-    {
-        String foodOrDrink1 = beefBurger.getThisFoodOrDrink();
-
-        assertEquals("Food or Drink: ", "Food", foodOrDrink1);
-    }
+//    @Test
+//    public void foodOrDrinkTest()
+//    {
+//        String foodOrDrink1 = beefBurger.getThisFoodOrDrink();
+//
+//        assertEquals("Food or Drink: ", "Food", foodOrDrink1);
+//    }
 
     @Test
     public void getTypeTest()
