@@ -19,6 +19,8 @@ public class ItemTest {
         beefBurger= new Item("Beef Burger", "Burger", 1200 );
     }
 
+
+//checks get name function works on each item
     @Test
     public void getNameTest()
     {
@@ -28,6 +30,7 @@ public class ItemTest {
     }
 
 
+// checked for food or drink before it was removed
 //    @Test
 //    public void foodOrDrinkTest()
 //    {
@@ -36,6 +39,8 @@ public class ItemTest {
 //        assertEquals("Food or Drink: ", "Food", foodOrDrink1);
 //    }
 
+
+//test to find the food type
     @Test
     public void getTypeTest()
     {
@@ -45,6 +50,7 @@ public class ItemTest {
     }
 
 
+//tests the get price function
     @Test
     public void priceTest()
     {
