@@ -32,12 +32,14 @@ public class BillTest
 
     }
 
+//tests the add function
     @Test
     public void addTest()
     {
 
     }
 
+//tests the to file function. creating a text file with dummy data
     @Test
     public void toFileTest() throws FileNotFoundException
     {
@@ -45,6 +47,7 @@ public class BillTest
         billTest.toFile("billTestFile.txt");
     }
 
+//checks that the get total function works
     @Test
     public void getTotalTest()
     {
