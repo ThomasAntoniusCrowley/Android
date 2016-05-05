@@ -1,5 +1,12 @@
 package com.example.sean.restaurantapp;
 
+/**
+ * this class manages the launch screen for the app, the user clicks a table. the table number is logged
+ * and sent as a message to the next activity, where the table number is displayed at the top of the menu
+ *
+ * @author Thomas Crowley & Sean O'Connor
+ */
+ 
 import android.content.Intent;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +27,7 @@ public class table_selector extends AppCompatActivity {
 
     }
 
+//this handles the button clicks and send the relevant table number to the next activivty 
 
     public void handleButtonClick(View view) {
 
